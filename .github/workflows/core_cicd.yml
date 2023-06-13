@@ -29,9 +29,9 @@ jobs:
           pip install -r requirements.txt
       - name: connect to db & run cicd py script # run script to open webpage (and get the latest data)
         env: 
-            mysql_db: ${{ secrets.database }}
-            mysql_host: ${{ secrets.host }}
-            mysql_pass: ${{ secrets.password }} 
-            mysql_port: ${{ secrets.port = 3306}} 
-            mysql_user: ${{ secrets.user }} 
+            mysql_db: ${{ secrets.MYSQL_DB }}
+            mysql_host: ${{ secrets.MYSQL_HOST }}
+            mysql_pass: ${{ secrets.MYSQL_PASSWORD }} 
+            mysql_port: ${{ secrets.MYSQL_PORT = 3306}} 
+            mysql_user: ${{ secrets.MYSQL_USER }} 
         run: python core.py
