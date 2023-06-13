@@ -13,6 +13,18 @@ password = os.environ.get("MYSQL_PASSWORD")
 database = os.environ.get("MYSQL_DB")
 port = 3306
 
+def check_load_from_githubenv():
+    if host:
+        print("Loaded Host from GitHub Env")
+    if user:
+        print("Loaded User from GitHub Env")
+    if database:
+        print("Loaded DB from GitHub Env")
+    if port:
+        print("Loaded Port from GitHub Env")
+
+check_load_from_githubenv()
+
 # -- classes --
 class Database:
     """ base DB for making new connection and database interactions """
