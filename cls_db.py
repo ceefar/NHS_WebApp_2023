@@ -8,9 +8,9 @@ from mysql.connector import Error
 # -- initial db cnx setup - load db vars from .env --
 load_dotenv()
 host = os.environ.get("mysql_host")
-user = os.environ.get("MYSQL_USER")
-password = os.environ.get("MYSQL_PASSWORD")
-database = os.environ.get("MYSQL_DB")
+user = os.environ.get("mysql_user")
+password = os.environ.get("mysql_password")
+database = os.environ.get("mysql_db")
 port = 3306
 
 def check_load_from_githubenv():
