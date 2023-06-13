@@ -316,6 +316,7 @@ def create_base_first_apt_table():
     //params :
     //returns :
     """
+    print(f"Attempting To Create Base Table")
     # table creation query 
     query = "CREATE TABLE IF NOT EXISTS first_apt (id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, hospital_name VARCHAR(200) NOT NULL, hospital_region VARCHAR(20) NOT NULL,\
             `Breast Surgery` INT(3) NULL, Cardiology INT(3) NULL, `Cardiothoracic Surgery` INT(3) NULL, `Clinical Haematology` INT(3) NULL, \
@@ -331,6 +332,7 @@ def create_base_first_apt_table():
 
 async def main() -> None:
     # --
+    print(f"Running CICD Pipeline")
     start_time = time.time()
     # --
     hosp_codes_list = ["RRK", "RKB", "RWE", "RBK"]
@@ -342,7 +344,7 @@ async def main() -> None:
     # --
     end_time = time.time()
     elapsed_time = end_time - start_time
-    print(f"{elapsed_time = }")
+    print(f"Completed In {elapsed_time}s")
 
 
 
