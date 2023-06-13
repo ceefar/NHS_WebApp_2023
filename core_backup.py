@@ -11,7 +11,6 @@ import json
 import requests
 import time
 import urllib.error
-import datetime
 
 # -- some handy objects --
 JSON = int | str | float | bool | None | dict [str, "JSON"] | list["JSON"]
@@ -264,51 +263,39 @@ def insert_db_data(entries:list[tuple], amount_of_departments:int, want_breast:b
     //params : entries (as list of tuples), amount_of_entries (as int) creates the values part of the query
     // returns : None
     """
-    for entry in entries:
-        # Extract hospital_name and date from entry
-        # Assuming the hospital_name is the first item and the date is the last item in each entry
-        hospital_name = entry[0]
-        current_date = datetime.date.today()
-        date = str(current_date)
-        # Only insert data if no matching entry is found in the database
-        if not db.check_existing_entry(hospital_name, date, table_name):
-            print("Found Existing Data For Today - Skipping Entry")
-        else:
-            print("No Existing Entry For Today - Saving Data")
-
-            param_list, param_tuple = [], ()
-            # extend the given data set into one long list with all the data
-            [param_list.extend(entry) for entry in entries]
-            # then convert it to a tuple to be used as the parameter variable
-            param_tuple = tuple(param_list)
-            # amount of departments should be dynamic from the amount of booleans that are true duh    
-            placeholder = "%s, "
-            temp_string = placeholder * (amount_of_departments) # minus one for the end (nope now thats the hospital name)
-            values_string = "(" + temp_string + "%s),"
-            # the end slice removes the final trailing comma
-            final_values = values_string[:-1]
-            # create prepared query with given parameters for 5 entries
-            sql_1 = f"INSERT INTO {table_name} (hospital_name, hospital_region, {'`Breast Surgery`,' if want_breast else ''} {'Cardiology,' if want_cardiology else ''} \
-                    {'`Cardiothoracic Surgery`,' if want_cardiothoracic else ''} {'`Clinical Haematology`,' if want_clinical_haemotology else ''} \
-                    {'`Colorectal Surgery`,' if want_colorectal else ''} {'Dermatology,' if want_dermatology else ''} \
-                    {'`Ear Nose and Throat`,' if want_ear else ''} {'Gastroenterology,' if want_gastroenterology else ''} \
-                    {'`General Surgery`,' if want_general_surgery else ''} {'Gynaecology,' if want_gynaecology else ''} \
-                    {'`General Internal Medicine`,' if want_general else ''} {'`Maxillofacial Surgery`,' if want_maxillofacial else ''} \
-                    {'Neurosurgical,' if want_neurosurgical else ''} {'Neurology,' if want_neurology else ''} {'Urology,' if want_urology else ''} \
-                    {'`Trauma and Orthopaedic`,' if want_trauma else ''} {'Ophthalmology,' if want_ophthalmology else ''} \
-                    {'`Oral Surgery`,' if want_oral else ''} {'Paediatric,' if want_paediatric else ''} \
-                    {'`Plastic Surgery`,' if want_plastic else ''} {'`Paediatric Surgery`,' if want_paediatric_surgery else ''} \
-                    {'`Pain Management`,' if want_pain else ''} {'`Respiratory Medicine`,' if want_respiratory else ''} \
-                    {'Rheumatology,' if want_rheumatology else ''} {'`Spinal Surgery`,' if want_spinal else ''} \
-                    {'`Upper Gastrointestinal Surgery`,' if want_upper else ''} {'`Vascular Surgery`,' if want_vascular else ''}"
-            # create the sql string ensuring that the insert columns are formatted properly within brackets plus with correct use of spacing and commas
-            sql_2 = f"VALUES {final_values}" 
-            last_comma = sql_1.rfind(",")
-            sql_1 = sql_1[:last_comma]
-            sql = sql_1 + ") " + sql_2
-            # send off the query
-            db.secure_add_to_db(sql, param_tuple)
-
+    #time_before = perf_counter()
+    param_list, param_tuple = [], ()
+    # extend the given data set into one long list with all the data
+    [param_list.extend(entry) for entry in entries]
+    # then convert it to a tuple to be used as the parameter variable
+    param_tuple = tuple(param_list)
+    # amount of departments should be dynamic from the amount of booleans that are true duh    
+    placeholder = "%s, "
+    temp_string = placeholder * (amount_of_departments) # minus one for the end (nope now thats the hospital name)
+    values_string = "(" + temp_string + "%s),"
+    # the end slice removes the final trailing comma
+    final_values = values_string[:-1]
+    # create prepared query with given parameters for 5 entries
+    sql_1 = f"INSERT INTO {table_name} (hospital_name, hospital_region, {'`Breast Surgery`,' if want_breast else ''} {'Cardiology,' if want_cardiology else ''} \
+            {'`Cardiothoracic Surgery`,' if want_cardiothoracic else ''} {'`Clinical Haematology`,' if want_clinical_haemotology else ''} \
+            {'`Colorectal Surgery`,' if want_colorectal else ''} {'Dermatology,' if want_dermatology else ''} \
+            {'`Ear Nose and Throat`,' if want_ear else ''} {'Gastroenterology,' if want_gastroenterology else ''} \
+            {'`General Surgery`,' if want_general_surgery else ''} {'Gynaecology,' if want_gynaecology else ''} \
+            {'`General Internal Medicine`,' if want_general else ''} {'`Maxillofacial Surgery`,' if want_maxillofacial else ''} \
+            {'Neurosurgical,' if want_neurosurgical else ''} {'Neurology,' if want_neurology else ''} {'Urology,' if want_urology else ''} \
+            {'`Trauma and Orthopaedic`,' if want_trauma else ''} {'Ophthalmology,' if want_ophthalmology else ''} \
+            {'`Oral Surgery`,' if want_oral else ''} {'Paediatric,' if want_paediatric else ''} \
+            {'`Plastic Surgery`,' if want_plastic else ''} {'`Paediatric Surgery`,' if want_paediatric_surgery else ''} \
+            {'`Pain Management`,' if want_pain else ''} {'`Respiratory Medicine`,' if want_respiratory else ''} \
+            {'Rheumatology,' if want_rheumatology else ''} {'`Spinal Surgery`,' if want_spinal else ''} \
+            {'`Upper Gastrointestinal Surgery`,' if want_upper else ''} {'`Vascular Surgery`,' if want_vascular else ''}"
+    # create the sql string ensuring that the insert columns are formatted properly within brackets plus with correct use of spacing and commas
+    sql_2 = f"VALUES {final_values}" 
+    last_comma = sql_1.rfind(",")
+    sql_1 = sql_1[:last_comma]
+    sql = sql_1 + ") " + sql_2
+    # send off the query
+    db.secure_add_to_db(sql, param_tuple)
 
 def create_base_first_apt_table():
     """
@@ -317,7 +304,7 @@ def create_base_first_apt_table():
     //returns :
     """
     # table creation query 
-    query = "CREATE TABLE IF NOT EXISTS first_apt (id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, hospital_name VARCHAR(200) NOT NULL, hospital_region VARCHAR(20) NOT NULL,\
+    query = "CREATE TABLE IF NOT EXISTS first_apt (id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, hospital_name VARCHAR(60) NOT NULL, hospital_region VARCHAR(20) NOT NULL,\
             `Breast Surgery` INT(3) NULL, Cardiology INT(3) NULL, `Cardiothoracic Surgery` INT(3) NULL, `Clinical Haematology` INT(3) NULL, \
             `Colorectal Surgery` INT(3) NULL, Dermatology INT(3) NULL, `Ear Nose and Throat` INT(3) NULL, Gastroenterology INT(3) NULL, \
             `General Surgery` INT(3) NULL, Gynaecology INT(3) NULL, `General Internal Medicine` INT(3) NULL,`Maxillofacial Surgery` INT(3) NULL, \
@@ -352,18 +339,6 @@ if __name__ == "__main__":
     asyncio.run(main()) 
 
 
-# N0TE
-# - class based, data structures, design patterns, think about this stuff during / for a first refactor (tho dont take donkeys on this project tho)
 
-# RNRN
-# - GET THIS WORKING ON CICD - TO TEST JUST EDIT ENTRIES TO BE FROM YESTERDAY
-# - get to the whole collating daily averages thing after
-#   - as per below ensure this is designed with the web app in mind
-# - get some basic web app back up but instead of their api use my own db nice!
-# - then get some basic web app up to start legit just put in your postcode and get a list of trusts, then start doing the whole map thing with this and expand from there
-
-# TO CONFIRM
-# - MAKE SURE IT SKIPS OVER IF THERE ARE STILL VALID
-
-# GET GPT TO...
-# - AS PER EXISTING PRINTS, CONVERT TO LOGS, ENSURE THEY ARE GIVING MORE ACCURATE INFO i.e. the hosp name duh
+# NOW CONVERT TO CICD AND THEN DO WEB APP BASICS!
+# - ensure cover edge cases also so stuff doesnt break plis

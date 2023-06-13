@@ -3,6 +3,7 @@
 import os
 from dotenv import load_dotenv
 import mysql.connector
+from mysql.connector import Error
 
 # -- initial db cnx setup - load db vars from .env --
 load_dotenv()
@@ -16,7 +17,7 @@ port = os.environ.get("port")
 # -- classes --
 class Database:
     """ base DB for making new connection and database interactions """
-    
+
     def __init__(self) -> None:
         """ 
         //desc : db class constructor, initialise the connection and make it global so it can be accessed by extentions of this class
@@ -84,5 +85,25 @@ class Database:
         """ close the connection, no need to close the cursor as its open with a context manager (so will close itself) """
         print("[ Closing DB Connection ]\n")
         conn.close()
+
+    def check_existing_entry(self, hospital_name, date, table_name):
+        """ checks for existing entry in database """
+        # -- SQL query to check for existing entry with the same hospital name and date --
+        sql_check = "SELECT * FROM {} WHERE hospital_name = %s AND DATE(created_on) = %s".format(table_name)
+        params = (hospital_name, date)
+        try:
+            with conn.cursor() as cur: 
+                # -- execute the SQL query --
+                cur.execute(sql_check, params)
+                # -- fetch one record and return result --
+                result = cur.fetchone()
+                # --
+                if result != None:
+                    return False
+                else:
+                    return True
+        # --
+        except mysql.connector.errors.InternalError:
+            return False
 
 
