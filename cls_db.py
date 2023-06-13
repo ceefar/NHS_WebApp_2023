@@ -7,10 +7,10 @@ from mysql.connector import Error
 
 # -- initial db cnx setup - load db vars from .env --
 load_dotenv()
-host = os.environ.get("host")
-user = os.environ.get("user")
-password = os.environ.get("password")
-database = os.environ.get("database")
+host = os.environ.get("MYSQL_HOST")
+user = os.environ.get("MYSQL_USER")
+password = os.environ.get("MYSQL_PASSWORD")
+database = os.environ.get("MYSQL_DB")
 port = os.environ.get("port")
 
 
