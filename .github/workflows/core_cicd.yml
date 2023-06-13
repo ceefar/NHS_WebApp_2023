@@ -1,0 +1,37 @@
+name: get_fresh_nhs_data
+
+# on schedule and on open pr
+on:
+  schedule:
+    - cron: '*/20 * * * *' # and run every 20 minutes while testing
+    # - cron: "50 06 * * *" # run every day at 5:50am      
+    # - cron: "0 */3 * * *" # and every six hours
+    # - cron: "01 01 * * *" # and run every day at 1:01am
+  pull_request:
+    types: [opened]   
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: checkout repo content
+        uses: actions/checkout@v3 # checkout the repository content to github runner
+
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.11.2' # install the python version needed
+          
+      - name: install python packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: connect to db & run cicd py script # run script to open webpage (and get the latest data)
+        env: 
+            mysql_db: ${{ secrets.database }}
+            mysql_host: ${{ secrets.host }}
+            mysql_pass: ${{ secrets.password }} 
+            mysql_port: ${{ secrets.port = 3306}} 
+            mysql_user: ${{ secrets.user }} 
+        run: python core.py
