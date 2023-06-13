@@ -31,7 +31,7 @@ jobs:
         env: 
             mysql_db: ${{ secrets.MYSQL_DB }}
             mysql_host: ${{ secrets.MYSQL_HOST }}
-            mysql_pass: ${{ secrets.MYSQL_PASSWORD }} 
+            mysql_password: ${{ secrets.MYSQL_PASSWORD }} 
             mysql_port: ${{ secrets.MYSQL_PORT }} 
             mysql_user: ${{ secrets.MYSQL_USER }} 
         run: python core.py
