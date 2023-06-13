@@ -32,6 +32,6 @@ jobs:
             mysql_db: ${{ secrets.MYSQL_DB }}
             mysql_host: ${{ secrets.MYSQL_HOST }}
             mysql_pass: ${{ secrets.MYSQL_PASSWORD }} 
-            mysql_port: ${{ secrets.MYSQL_PORT = 3306}} 
+            mysql_port: ${{ secrets.MYSQL_PORT = 3306 }} 
             mysql_user: ${{ secrets.MYSQL_USER }} 
         run: python core.py
