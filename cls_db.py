@@ -5,7 +5,8 @@ from dotenv import load_dotenv
 import mysql.connector
 from mysql.connector import Error
 
-# -- initial db cnx setup - load db vars from .env --
+# -- initial db cnx setup - load db vars from .env -- 
+# bruh wtf
 load_dotenv()
 host = os.environ.get("mysql_host")
 user = os.environ.get("mysql_user")
