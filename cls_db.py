@@ -27,7 +27,7 @@ class Database:
         global conn
         conn = self.init_connection()
 
-    def init_connection(self) -> mysql.connector.connection_cext.CMySQLConnection:
+    def init_connection(self):
         """
         //desc : leading underscore is necessary on the self parameter to ensure the connection isn't hashed by the singleton decorator but still cached
         //params : _self 
@@ -36,7 +36,7 @@ class Database:
         cnx = mysql.connector.connect(host=host, database=database, user=user, password=password, port=port)
         return(cnx)
 
-    def refresh_connection(self) -> mysql.connector.connection_cext.CMySQLConnection:
+    def refresh_connection(self):
         """
         //desc : reset to the global connection object, and then return it 
         //params : _self 
