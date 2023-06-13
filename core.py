@@ -347,7 +347,6 @@ async def main() -> None:
     print(f"Completed In {elapsed_time}s")
 
 
-
 # -- driver --    
 if __name__ == "__main__": 
     create_base_first_apt_table()
