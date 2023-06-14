@@ -1,5 +1,8 @@
 
-# ---- imports ----
+# -- author : ceefar --
+# -- project : nhs etl 2023 --
+
+# -- imports --
 import os
 from dotenv import load_dotenv
 import mysql.connector
@@ -121,3 +124,4 @@ class Database:
         # --
         except mysql.connector.errors.InternalError:
             return False
+
