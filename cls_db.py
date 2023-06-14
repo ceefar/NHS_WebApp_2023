@@ -47,7 +47,7 @@ class Database:
         //params : _self 
         //returns : the connection object
         """
-        cnx = mysql.connector.connect(host=host, database=database, user=user, password=password, port=port)
+        cnx = mysql.connector.connect(host=host, database=database, user=user, charset='utf8mb4', password=password, port=port)
         return(cnx)
 
     def refresh_connection(self):
@@ -57,7 +57,7 @@ class Database:
         //returns : the connection object
         """
         global conn
-        cnx = mysql.connector.connect(host=host, database=database, user=user, password=password, port=port)
+        cnx = mysql.connector.connect(host=host, database=database, user=user, charset='utf8mb4', password=password, port=port)
         conn = cnx
         return(cnx)
 
