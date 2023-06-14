@@ -15,18 +15,20 @@ database = os.environ.get("mysql_db")
 port = 3306
 
 # --
-def check_load_from_githubenv():
+def check_load_from_env():
+    print(f"\n- - - - - - - - - -\n[ Running Initial Setup ]\n- - - - - - - - - -\n")
     if host:
-        print("Loaded Host from GitHub Env")
+        print("Loaded Host from Env")
     if user:
-        print("Loaded User from GitHub Env")
+        print("Loaded User from Env")
     if password:
-        print("Loaded PW from GitHub Env")
+        print("Loaded PW from Env")
     if database:
-        print("Loaded DB from GitHub Env")
+        print("Loaded DB from Env")
     if port:
-        print("Loaded Port from GitHub Env")
-check_load_from_githubenv()
+        print("Loaded Port from Env")
+    print(f"\n- - - - - - - - - -\n[ Initial Setup Complete ]\n- - - - - - - - - -")
+check_load_from_env()
 
 # -- classes --
 class Database:
@@ -119,6 +121,3 @@ class Database:
         # --
         except mysql.connector.errors.InternalError:
             return False
-
-#  
-# 
