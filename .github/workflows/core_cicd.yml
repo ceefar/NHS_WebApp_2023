@@ -1,6 +1,10 @@
+# -- author : ceefar --
+# -- file : cicd pipeline yaml - gets fresh nhs data each day from the NHS My Planned Care API --
+# -- project : nhs etl 2023 --
+
 name: get_fresh_nhs_data
 
-# on schedule and on open pr
+# -- on schedule and on open pr --
 on:
   schedule:
     - cron: "0 */3 * * *" # and every 3 hours

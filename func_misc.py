@@ -1,5 +1,5 @@
 # -- author : ceefar --
-# -- project : nhs 2023 --
+# -- project : nhs etl 2023 --
 
 
 # -- some handy objects --
@@ -9,7 +9,11 @@ JSONList = list[JSON]
 
 # -- general globals --
 header = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"}
-hospitals_regions = {'UNIVERSITY HOSPITALS BIRMINGHAM NHS FOUNDATION TRUST':"mids", 'CHESTERFIELD ROYAL HOSPITAL NHS FOUNDATION TRUST':"mids", 
+
+# -- misc class --
+class Misc:
+    regions_list = {"mids":"midlands", "london":"london"}
+    hospitals_regions = {'UNIVERSITY HOSPITALS BIRMINGHAM NHS FOUNDATION TRUST':"mids", 'CHESTERFIELD ROYAL HOSPITAL NHS FOUNDATION TRUST':"mids", 
                         'KETTERING GENERAL HOSPITAL NHS FOUNDATION TRUST':"mids", 'NOTTINGHAM UNIVERSITY HOSPITALS NHS TRUST':"mids", 
                         'SHERWOOD FOREST HOSPITALS NHS FOUNDATION TRUST':"mids", 'THE DUDLEY GROUP NHS FOUNDATION TRUST':"mids", 
                         'THE ROYAL ORTHOPAEDIC HOSPITAL NHS FOUNDATION TRUST':"mids", 'THE SHREWSBURY AND TELFORD HOSPITAL NHS TRUST':"mids", 

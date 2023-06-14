@@ -1,6 +1,5 @@
 # -- author : ceefar --
-# -- project : nhs 2023 --
-
+# -- project : nhs etl 2023 --
 
 # -- imports --
 import asyncio
@@ -99,7 +98,7 @@ async def get_page_data(given_url:str) -> dict:
 def get_region_from_name(hospital_name:str) -> str:
     """ """
     # should be using dictionaries as its quicker to check keys than to loop a list duh!
-    region = hospitals_regions[hospital_name]
+    region = Misc.hospitals_regions[hospital_name]
     return(region)
 
 def add_first_wait_times_to_db_sync(hospital_data):
@@ -217,7 +216,7 @@ def create_base_first_apt_table():
     //returns :
     """
     print(f"\n- - - - - - - - - -\n[ Checking For Base Table ]\n- - - - - - - - - -")
-    # table creation query 
+    # -- table creation query --  
     query = "CREATE TABLE IF NOT EXISTS first_apt (id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, hospital_name VARCHAR(200) NOT NULL, hospital_region VARCHAR(20) NOT NULL,\
             `Breast Surgery` INT(3) NULL, Cardiology INT(3) NULL, `Cardiothoracic Surgery` INT(3) NULL, `Clinical Haematology` INT(3) NULL, \
             `Colorectal Surgery` INT(3) NULL, Dermatology INT(3) NULL, `Ear Nose and Throat` INT(3) NULL, Gastroenterology INT(3) NULL, \
@@ -227,5 +226,5 @@ def create_base_first_apt_table():
             `Respiratory Medicine` INT(3) NULL, Rheumatology INT(3) NULL, `Spinal Surgery` INT(3) NULL, `Trauma and Orthopaedic` INT(3) NULL, \
             `Upper Gastrointestinal Surgery` INT(3) NULL, Urology INT(3) NULL, `Vascular Surgery` INT(3) NULL, \
             created_on datetime NOT NULL DEFAULT CURRENT_TIMESTAMP);"
-    # commit the table to db
+    # -- commit the table to db -- 
     db.secure_add_to_db(query)

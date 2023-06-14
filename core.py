@@ -1,5 +1,5 @@
 # -- author : ceefar --
-# -- project : nhs 2023 --
+# -- project : nhs etl 2023 --
 
 
 # -- imports --
@@ -33,6 +33,8 @@ if __name__ == "__main__":
     asyncio.run(main()) 
 
 
+
+# RENAME DB TABLE FROM FIRST_APT TO WAIT_TIMES PLEASE! 
 
 
 
