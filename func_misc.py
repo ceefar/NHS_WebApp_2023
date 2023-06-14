@@ -12,7 +12,7 @@ header = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/53
 
 # -- misc class --
 class Misc:
-    regions_list = {"mids":"midlands", "london":"london"}
+    regions_list = {"midlands":"mids", "london":"london","north east and yorkshire":"ney", "south west":"swest"}
     hospitals_regions = {'UNIVERSITY HOSPITALS BIRMINGHAM NHS FOUNDATION TRUST':"mids", 'CHESTERFIELD ROYAL HOSPITAL NHS FOUNDATION TRUST':"mids", 
                         'KETTERING GENERAL HOSPITAL NHS FOUNDATION TRUST':"mids", 'NOTTINGHAM UNIVERSITY HOSPITALS NHS TRUST':"mids", 
                         'SHERWOOD FOREST HOSPITALS NHS FOUNDATION TRUST':"mids", 'THE DUDLEY GROUP NHS FOUNDATION TRUST':"mids", 
@@ -105,3 +105,24 @@ class Misc:
                         'ROYAL PAPWORTH HOSPITAL NHS FOUNDATION TRUST':"east",
                         "THE QUEEN ELIZABETH HOSPITAL, KING'S LYNN, NHS FOUNDATION TRUST":"east",
                         'WEST SUFFOLK NHS FOUNDATION TRUST':"east"}
+    departments_list = [
+        'General Surgery',
+        'Urology',
+        'Trauma and Orthopaedic',
+        'Ear Nose and Throat',
+        'Ophthalmology',
+        'Oral Surgery',
+        'Neurosurgical',
+        'Plastic Surgery',
+        'Cardiothoracic Surgery',
+        'General Internal Medicine',
+        'Gastroenterology',
+        'Cardiology',
+        'Dermatology',
+        'Respiratory Medicine',
+        'Neurology',
+        'Rheumatology',
+        'Elderly Medicine',
+        'Gynaecology']
+
+
