@@ -1,19 +1,14 @@
 # project : nhs etl 
-# file : my planned care api scraper 
 # author : ceefar
 
 # -- imports --
 import requests
 import json
-import codecs # can be removed if necessary as alternative functionality has been added
-from pprint import pprint # will remove in future
+import codecs 
+from func_misc import *
 
-# -- predefine some handy objects --
-JSON = int | str | float | bool | None | dict [str, "JSON"] | list["JSON"]
-JSONobject = dict[str, JSON]
-JSONList = list[JSON]
  
-# -- get json response from api -- 
+# -- funcs : get json response from api -- 
 def get_json_response_from_mpc(provider_code:str):
     url = f"https://www.myplannedcare.nhs.uk/mpcjson/{provider_code}.json"
     header = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"}
@@ -69,32 +64,4 @@ if __name__ == "__main__":
         print(f"{dept_full}")
         print(f"{first_avg_wait}")
         print(f"{avg_wait}")
-
-
-
-# get codes, unsure of the 'best' way to do this but for now i think just group them by region and have them hardcoded since i have them
-# loop over all codes asycnronously 
-# store the data locally (mays well do this anyway huh? - atleast for now, maybe not in cicd?)
-# upload it to a new database
-
-# then do a basic page to test it works fine
-# then idk whatever either page or cicd or ...
-
-# initially plis make 2 versions of the test page, one working via my db and one working via api (showing the same data)
-# - as ideally i would like that functionality, maybe just for one page or whatever but still
-
-# - do a simple first version then we'll think about a proper or improved schema when adding the csv stuff
-# - actually guna do that today too cause can actually do it dynamically (just get legit all the dates of data too but obvs will have cicd to do it monthly)
-#   - for this can actually use the date to check if its around the time of upload being expected per month, and if it isnt close then dont run the full yaml
-
-
-
-
-
-
-
-# THINK ABOUT MODULES
-# THINK ABOUT CLASSES
-# - get json response from api etc - legit that other function should just work too sick
-#   - screw it just make this a class for the sake of reuseability too, and legit make the py file a name_cls.py bosh
 
