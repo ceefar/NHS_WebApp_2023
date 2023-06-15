@@ -18,8 +18,15 @@ def check_pulse():
         print(f"\n- - - - - - - - - -\n[ DB Status : DED ]\n- - - - - - - - - -\n")
     # print(f"{res = }")
 
-def get_trust_curr_wait_time_for_a_department(user_department, user_trust):
+def get_trust_curr_first_apt_for_a_department(user_department, user_trust):
     query = f"SELECT hospital_name, `{user_department}` FROM first_apt \
+                WHERE hospital_name = '{user_trust}' AND DATE(created_on) = CURDATE();"
+    res = db.secure_get_from_db(query, None)
+    print(f"{res = }")
+    return res
+
+def get_trust_curr_avg_wait_time_for_a_department(user_department, user_trust):
+    query = f"SELECT hospital_name, `{user_department}` FROM avg_wait \
                 WHERE hospital_name = '{user_trust}' AND DATE(created_on) = CURDATE();"
     res = db.secure_get_from_db(query, None)
     print(f"{res = }")

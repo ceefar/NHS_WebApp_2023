@@ -1,0 +1,72 @@
+
+DELIMITER //
+
+CREATE PROCEDURE InsertDailyAverages()
+BEGIN
+    INSERT INTO daily_department_averages_mids
+        (
+            date, 
+            avg_breast_surgery, 
+            avg_cardiology, 
+            avg_cardiothoracic_surgery, 
+            avg_clinical_haematology, 
+            avg_colorectal_surgery,
+            avg_dermatology,
+            avg_ent,
+            avg_gastroenterology,
+            avg_general_surgery,
+            avg_gynaecology,
+            avg_general_internal_medicine,
+            avg_maxillofacial_surgery,
+            avg_neurology,
+            avg_neurosurgical,
+            avg_ophthalmology,
+            avg_oral_surgery,
+            avg_paediatric,
+            avg_paediatric_surgery,
+            avg_pain_management,
+            avg_plastic_surgery,
+            avg_respiratory_medicine,
+            avg_rheumatology,
+            avg_spinal_surgery,
+            avg_trauma_orthopaedic,
+            avg_upper_gi_surgery,
+            avg_urology,
+            avg_vascular_surgery
+        )
+    SELECT 
+        CURDATE(),
+        AVG(`Breast Surgery`),
+        AVG(`Cardiology`), 
+        AVG(`Cardiothoracic Surgery`), 
+        AVG(`Clinical Haematology`),
+        AVG(`Colorectal Surgery`),
+        AVG(`Dermatology`),
+        AVG(`Ear Nose and Throat`),
+        AVG(`Gastroenterology`),
+        AVG(`General Surgery`),
+        AVG(`Gynaecology`),
+        AVG(`General Internal Medicine`),
+        AVG(`Maxillofacial Surgery`),
+        AVG(`Neurology`),
+        AVG(`Neurosurgical`),
+        AVG(`Ophthalmology`),
+        AVG(`Oral Surgery`),
+        AVG(`Paediatric`),
+        AVG(`Paediatric Surgery`),
+        AVG(`Pain Management`),
+        AVG(`Plastic Surgery`),
+        AVG(`Respiratory Medicine`),
+        AVG(`Rheumatology`),
+        AVG(`Spinal Surgery`),
+        AVG(`Trauma and Orthopaedic`),
+        AVG(`Upper Gastrointestinal Surgery`),
+        AVG(`Urology`),
+        AVG(`Vascular Surgery`)
+    FROM 
+        first_apt
+    WHERE 
+        hospital_region = 'mids';
+END//
+
+DELIMITER ;
