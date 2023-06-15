@@ -32,6 +32,20 @@ def get_trust_curr_avg_wait_time_for_a_department(user_department, user_trust):
     print(f"{res = }")
     return res
 
+def get_london_daily_avg_first_apt():
+    # PASS IN A DATE THING REMEMBER!!!! < [ TODO ]
+    query = f"SELECT * FROM `daily_department_averages_london` WHERE DATE(date) = CURDATE();"
+    res = db.secure_get_from_db(query, None)
+    print(f"{res = }")
+    return res
+
+def get_mids_daily_avg_first_apt():
+    # PASS IN A DATE THING REMEMBER!!!! < [ TODO ]
+    query = f"SELECT * FROM `daily_department_averages_mids` WHERE DATE(date) = CURDATE();"
+    res = db.secure_get_from_db(query, None)
+    print(f"{res = }")
+    return res
+
 # -- delete this --
 def get_db_accurate_hospital_names():
     """ am 100% guna hardcode this but ideally would add some additional check that would check db names and hardcoded names match each day, if not inform me (via failed action), could even be a every other day kinda thing too """
