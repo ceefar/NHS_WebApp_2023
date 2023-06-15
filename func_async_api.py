@@ -96,8 +96,7 @@ async def get_page_data(given_url:str) -> dict:
     return(hospital_data)
 
 def get_region_from_name(hospital_name:str) -> str:
-    """ """
-    # should be using dictionaries as its quicker to check keys than to loop a list duh!
+    """ add KeyError error handling here pls """
     region = Misc.hospitals_regions[hospital_name]
     return(region)
 

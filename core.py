@@ -14,7 +14,7 @@ async def main() -> None:
     print(f"\n- - - - - - - - - -\n[ Running CICD Pipeline ]\n- - - - - - - - - -\n")
     start_time = time.time()
     # --
-    hospital_codes = ['RBK', 'RFS', 'RJC', 'RJE', 'RK5', 'RKB', 'RL1', 'RL4', 'RLQ', 'RLT', 'RNA', 'RNQ', 'RNS', 'RQ3', 'RRJ', 'RRK', 'RTG', 'RWD', 'RWE', 'RX1', 'RXK', 'RXW']
+    hospital_codes = ['RBK', 'RFS', 'RJC', 'RJE', 'RK5', 'RKB', 'RL1', 'RL4', 'RLQ', 'RLT', 'RNA', 'RNQ', 'RNS', 'RQ3', 'RRJ', 'RRK', 'RTG', 'RWD', 'RWE', 'RWP', 'RX1', 'RXK', 'RXW']
     # --
     webpage_data_list = await asyncio.gather(*[get_page_data(f"https://www.myplannedcare.nhs.uk/mpcjson/{code}.json") for code in set(hospital_codes)])
     hospital_data_list = await asyncio.gather(*[make_new_hospital_data_dict(hospital) for hospital in webpage_data_list])
@@ -33,11 +33,6 @@ if __name__ == "__main__":
     create_base_first_apt_table()
     asyncio.run(main()) 
 
-
-
-
-# MIDS NOT WORKING
-# 'RWP'
 
 
 # RENAME DB TABLE FROM FIRST_APT TO WAIT_TIMES PLEASE! 
