@@ -67,6 +67,16 @@ def main():
             st.markdown(f"##### {trust_first_apt_wait_time_from_db[0]}")
             st.metric(label="First Appointment Avg Wait", value=trust_first_apt_wait_time_from_db[1])
             st.metric(label="Treatment Avg Wait", value=trust_avg_wait_time_from_db[1])
+
+            # -- 
+            st.divider()
+            print(f"{user_department_entry = }")
+            london_avg = webapi.get_london_daily_avg_first_apt(user_department_entry if user_department_entry != "Ear Nose and Throat" else "ent")
+            mids_avg = webapi.get_mids_daily_avg_first_apt(user_department_entry if user_department_entry != "Ear Nose and Throat" else "ent")
+            st.metric(label="ALL LONDON Avg Wait", value=f"{float(london_avg):.1f}")
+            st.metric(label="ALL MIDLANDS Avg Wait", value=f"{float(mids_avg):.1f}")
+            
+
         elif app_mode == "NHS GPT":
             st.markdown("##### NHS GPT")
             user_chat_entry = st.text_input(label="What wait time information would you like to know?", value="What are the wait times for Neurology at Barts NHS Trust?", help="E.g. What are the wait times for `DEPARTMENT` at `NHS TRUST`")
@@ -84,8 +94,12 @@ if __name__ == "__main__":
 # STORED PROCEDURE FOR FIRST_APT AVERAGES IN NEW TABLE
 
 
+# ADD TO WEB APP...
+# REGIONS AVERAGE 
+# FASTEST IN REGION
+# SLOWEST IN REGION
 
-# ADD AVERAGES TO WEB APP
+
 # IMPROVE THE OTHER METRIC DISPLAY
 # - start thinking about specific usecases now please, particularly own version!
 # ADD BARTS AND A FEW OTHER LONDON HOSPS TOO!
