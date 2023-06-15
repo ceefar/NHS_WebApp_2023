@@ -10,7 +10,7 @@ import os
 import openai
 # -- internal imports --
 import func_web_api as webapi
-from func_misc import Misc
+from func_misc import Misc, get_cleaned_dept
 
 
 # -- streamlit setup --
@@ -25,7 +25,6 @@ OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 openai.api_key = OPENAI_API_KEY
 
 # -- st cached api functions --
-
 @st.cache_data
 def get_trust_curr_avg_wait_time_for_a_department(user_department, user_trust):
     wait_time_data = webapi.get_trust_curr_avg_wait_time_for_a_department(user_department, user_trust)
@@ -37,6 +36,18 @@ def get_trust_curr_first_apt_for_a_department(user_department, user_trust):
     wait_time_data = webapi.get_trust_curr_first_apt_for_a_department(user_department, user_trust)
     print(f"{wait_time_data = }")
     return wait_time_data[0]
+
+@st.cache_data
+def get_london_daily_avg_first_apt(user_department):
+    cleaned_dept = get_cleaned_dept(user_department)
+    london_avg_data = webapi.get_london_daily_avg_first_apt(cleaned_dept)
+    return london_avg_data
+
+@st.cache_data
+def get_mids_daily_avg_first_apt(user_department):
+    cleaned_dept = get_cleaned_dept(user_department)
+    mids_avg_data = webapi.get_mids_daily_avg_first_apt(cleaned_dept)
+    return mids_avg_data
 
 @st.cache_data
 def get_hospital_names_for_region(region): # note isnt an api function was just due to setup, can actually untangled/abstract out just to where its relevant
@@ -57,10 +68,11 @@ def main():
     col_1, col_2 = st.columns([2,3], gap="large")
     with col_1:
         if app_mode == "Manual":
-            st.markdown("##### Sumnt")
+            st.markdown("##### Search For Wait Time Info")
             user_department_entry = st.selectbox(label="Select a Department", options=Misc.departments_list)
             user_region_entry = st.selectbox(label="Select a Region", options=[region.title() for region in Misc.regions_list.keys()]) # formats the region list to title case
-            user_trust_entry = st.selectbox(label="Select an NHS Trust", options=get_hospital_names_for_region(Misc.regions_list[user_region_entry.lower()])) # must convert the param back to lower because of this
+            user_region_shortcode = Misc.regions_list[user_region_entry.lower()]
+            user_trust_entry = st.selectbox(label="Select an NHS Trust", options=get_hospital_names_for_region(user_region_shortcode)) # must convert the param back to lower because of this
             trust_first_apt_wait_time_from_db = get_trust_curr_first_apt_for_a_department(user_department_entry, user_trust_entry)
             trust_avg_wait_time_from_db = get_trust_curr_avg_wait_time_for_a_department(user_department_entry, user_trust_entry)
             st.divider()
@@ -68,14 +80,14 @@ def main():
             st.metric(label="First Appointment Avg Wait", value=trust_first_apt_wait_time_from_db[1])
             st.metric(label="Treatment Avg Wait", value=trust_avg_wait_time_from_db[1])
 
-            # -- 
+            # -- REMEMBER NEED TO MAKE THEM FUNCS HERE AND CACHE DEM --
             st.divider()
-            print(f"{user_department_entry = }")
-            london_avg = webapi.get_london_daily_avg_first_apt(user_department_entry if user_department_entry != "Ear Nose and Throat" else "ent")
-            mids_avg = webapi.get_mids_daily_avg_first_apt(user_department_entry if user_department_entry != "Ear Nose and Throat" else "ent")
+            london_avg = get_london_daily_avg_first_apt(user_department_entry)
+            mids_avg = get_mids_daily_avg_first_apt(user_department_entry)
             st.metric(label="ALL LONDON Avg Wait", value=f"{float(london_avg):.1f}")
             st.metric(label="ALL MIDLANDS Avg Wait", value=f"{float(mids_avg):.1f}")
-            
+            min_max_for_dept_x_region = webapi.get_min_max_first_apt_wait_for_department_and_region(user_department_entry, user_region_shortcode)
+            st.write(min_max_for_dept_x_region)
 
         elif app_mode == "NHS GPT":
             st.markdown("##### NHS GPT")
@@ -95,9 +107,17 @@ if __name__ == "__main__":
 
 
 # ADD TO WEB APP...
+# LETS HAVE ALL THIS STUFF REFORMATTED NOW AND ADDING IN ALL THE NEW METRICS N TING
 # REGIONS AVERAGE 
 # FASTEST IN REGION
 # SLOWEST IN REGION
+
+# THEN
+# POSTCODES AND MAP STUFF
+# ABILITY TO GO BACK IN TIME WITH WHOLE DATE PASSING THING TO WEB_API FUNCTIONS PLEASE, DO THIS BY HAVING A CAL IN SIDEBAR!
+# CHATBOT STUFF
+ 
+# FOR FASTEST AND SLOWEST, I.E MIN MAX, DO IN SQL QUERY AND CACHE IT BOSH! <<<<<<<<<<<<<<<<<<<<<<<<<<<<< THIS FIRST RNRN OMG MAN! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 # IMPROVE THE OTHER METRIC DISPLAY
