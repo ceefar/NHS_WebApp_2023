@@ -281,28 +281,33 @@ def create_base_first_apt_tables():
             `Respiratory Medicine` INT(3) NULL, Rheumatology INT(3) NULL, `Spinal Surgery` INT(3) NULL, `Trauma and Orthopaedic` INT(3) NULL, \
             `Upper Gastrointestinal Surgery` INT(3) NULL, Urology INT(3) NULL, `Vascular Surgery` INT(3) NULL, \
             created_on datetime NOT NULL DEFAULT CURRENT_TIMESTAMP);"
-    averages_table_query = "CREATE TABLE IF NOT EXISTS daily_department_averages_mids ( \
+    averages_table_mids_query = "CREATE TABLE IF NOT EXISTS daily_department_averages_mids ( \
+            id INT AUTO_INCREMENT PRIMARY KEY, date DATE NOT NULL, avg_breast_surgery DECIMAL(5,2), avg_cardiology DECIMAL(5,2), avg_cardiothoracic_surgery DECIMAL(5,2), avg_clinical_haematology DECIMAL(5,2), avg_colorectal_surgery DECIMAL(5,2), avg_dermatology DECIMAL(5,2), avg_ent DECIMAL(5,2), avg_gastroenterology DECIMAL(5,2), avg_general_surgery DECIMAL(5,2), \
+            avg_gynaecology DECIMAL(5,2), avg_general_internal_medicine DECIMAL(5,2), avg_maxillofacial_surgery DECIMAL(5,2), avg_neurology DECIMAL(5,2), avg_neurosurgical DECIMAL(5,2), avg_ophthalmology DECIMAL(5,2), avg_oral_surgery DECIMAL(5,2), avg_paediatric DECIMAL(5,2), avg_paediatric_surgery DECIMAL(5,2), avg_pain_management DECIMAL(5,2), \
+            avg_plastic_surgery DECIMAL(5,2), avg_respiratory_medicine DECIMAL(5,2), avg_rheumatology DECIMAL(5,2), avg_spinal_surgery DECIMAL(5,2), avg_trauma_orthopaedic DECIMAL(5,2), avg_upper_gi_surgery DECIMAL(5,2), avg_urology DECIMAL(5,2), avg_vascular_surgery DECIMAL(5,2))"
+    averages_table_london_query = "CREATE TABLE IF NOT EXISTS daily_department_averages_london ( \
             id INT AUTO_INCREMENT PRIMARY KEY, date DATE NOT NULL, avg_breast_surgery DECIMAL(5,2), avg_cardiology DECIMAL(5,2), avg_cardiothoracic_surgery DECIMAL(5,2), avg_clinical_haematology DECIMAL(5,2), avg_colorectal_surgery DECIMAL(5,2), avg_dermatology DECIMAL(5,2), avg_ent DECIMAL(5,2), avg_gastroenterology DECIMAL(5,2), avg_general_surgery DECIMAL(5,2), \
             avg_gynaecology DECIMAL(5,2), avg_general_internal_medicine DECIMAL(5,2), avg_maxillofacial_surgery DECIMAL(5,2), avg_neurology DECIMAL(5,2), avg_neurosurgical DECIMAL(5,2), avg_ophthalmology DECIMAL(5,2), avg_oral_surgery DECIMAL(5,2), avg_paediatric DECIMAL(5,2), avg_paediatric_surgery DECIMAL(5,2), avg_pain_management DECIMAL(5,2), \
             avg_plastic_surgery DECIMAL(5,2), avg_respiratory_medicine DECIMAL(5,2), avg_rheumatology DECIMAL(5,2), avg_spinal_surgery DECIMAL(5,2), avg_trauma_orthopaedic DECIMAL(5,2), avg_upper_gi_surgery DECIMAL(5,2), avg_urology DECIMAL(5,2), avg_vascular_surgery DECIMAL(5,2))"
     # -- commit the tables to db -- 
-    table_queries = [first_apt_table_query, avg_wait_table_query, averages_table_query]
+    table_queries = [first_apt_table_query, avg_wait_table_query, averages_table_mids_query, averages_table_london_query]
     [db.secure_add_to_db(table_query) for table_query in table_queries] 
-
 
 def run_averages_stored_procedure():
     # -- check if table has data for the current day
     today = datetime.date.today()
-    query = f"SELECT COUNT(*) FROM daily_department_averages_mids WHERE date = '{today}';"
-    result = db.secure_get_from_db(query)
-    data_exists = result[0][0]
-    # -- if data doesnt exist then run the stored procedure to process the averages for first_apts in mids --
-    if data_exists == 0:
-        print(f"\n- - - - - - - - - -\n[ Running Stored Procedure ]\n- - - - - - - - - -")
-        query = "CALL InsertDailyAverages();"
-        db.secure_add_to_db(query) 
-        print(f"\n- - - - - - - - - -\n[ First Apt Averages Data Updated Successfully ]\n- - - - - - - - - -")
-    else:
-        print(f"\n- - - - - - - - - -\n[ Skipping Stored Procedure Execution As Data Exists ]\n- - - - - - - - - -")
+    regions = ["mids", "london"]
+    for region in regions:
+        query = f"SELECT COUNT(*) FROM daily_department_averages_{region} WHERE date = '{today}';"
+        result = db.secure_get_from_db(query)
+        data_exists = result[0][0]
+        # -- if data doesnt exist then run the stored procedure to process the averages for first_apts in mids --
+        if data_exists == 0:
+            print(f"\n- - - - - - - - - -\n[ Running Stored Procedure - {region.title()} ]\n- - - - - - - - - -")
+            query = f"CALL InsertDailyAverages{region.title()}();"
+            db.secure_add_to_db(query) 
+            print(f"\n- - - - - - - - - -\n[ First Apt Averages Data Updated Successfully ]\n- - - - - - - - - -")
+        else:
+            print(f"\n- - - - - - - - - -\n[ Skipping Stored Procedure [ {region.title()} ] Execution As Data Exists ]\n- - - - - - - - - -")
 
 
