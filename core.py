@@ -15,7 +15,7 @@ async def main() -> None:
     
     # --
     mids_hospital_codes = ['RBK', 'RFS', 'RJC', 'RJE', 'RK5', 'RKB', 'RL1', 'RL4', 'RLQ', 'RLT', 'RNA', 'RNQ', 'RNS', 'RQ3', 'RRJ', 'RRK', 'RTG', 'RWD', 'RWE', 'RWP', 'RX1', 'RXK', 'RXW']
-    london_hospital_codes = ["R1H", "R1K", "RAL"]
+    london_hospital_codes = ["R1H", "R1K", "RAL", "RF4", "RJ1", "RJ2"]
     hospital_codes = []
     hospital_codes.extend(mids_hospital_codes)
     hospital_codes.extend(london_hospital_codes)

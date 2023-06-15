@@ -22,29 +22,24 @@ def get_trust_curr_first_apt_for_a_department(user_department, user_trust):
     query = f"SELECT hospital_name, `{user_department}` FROM first_apt \
                 WHERE hospital_name = '{user_trust}' AND DATE(created_on) = CURDATE();"
     res = db.secure_get_from_db(query, None)
-    print(f"{res = }")
     return res
 
 def get_trust_curr_avg_wait_time_for_a_department(user_department, user_trust):
     query = f"SELECT hospital_name, `{user_department}` FROM avg_wait \
                 WHERE hospital_name = '{user_trust}' AND DATE(created_on) = CURDATE();"
     res = db.secure_get_from_db(query, None)
-    print(f"{res = }")
     return res
 
-def get_london_daily_avg_first_apt():
-    # PASS IN A DATE THING REMEMBER!!!! < [ TODO ]
-    query = f"SELECT * FROM `daily_department_averages_london` WHERE DATE(date) = CURDATE();"
+def get_london_daily_avg_first_apt(user_department):
+    query = f"SELECT avg_{user_department.lower().replace(' ', '_')} FROM `daily_department_averages_london` WHERE DATE(date) = CURDATE();"
     res = db.secure_get_from_db(query, None)
-    print(f"{res = }")
-    return res
+    return res[0][0]
 
-def get_mids_daily_avg_first_apt():
+def get_mids_daily_avg_first_apt(user_department):
     # PASS IN A DATE THING REMEMBER!!!! < [ TODO ]
-    query = f"SELECT * FROM `daily_department_averages_mids` WHERE DATE(date) = CURDATE();"
+    query = f"SELECT avg_{user_department.lower().replace(' ', '_')} FROM `daily_department_averages_mids` WHERE DATE(date) = CURDATE();"
     res = db.secure_get_from_db(query, None)
-    print(f"{res = }")
-    return res
+    return res[0][0]
 
 # -- delete this --
 def get_db_accurate_hospital_names():

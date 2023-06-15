@@ -70,10 +70,11 @@ def main():
 
             # -- 
             st.divider()
-            london_avg = webapi.get_london_daily_avg_first_apt()
-            mids_avg = webapi.get_mids_daily_avg_first_apt()
-            st.metric(label="London Avg Wait", value=london_avg)
-            st.metric(label="Midlands Avg Wait", value=mids_avg)
+            print(f"{user_department_entry = }")
+            london_avg = webapi.get_london_daily_avg_first_apt(user_department_entry if user_department_entry != "Ear Nose and Throat" else "ent")
+            mids_avg = webapi.get_mids_daily_avg_first_apt(user_department_entry if user_department_entry != "Ear Nose and Throat" else "ent")
+            st.metric(label="ALL LONDON Avg Wait", value=f"{float(london_avg):.1f}")
+            st.metric(label="ALL MIDLANDS Avg Wait", value=f"{float(mids_avg):.1f}")
             
 
         elif app_mode == "NHS GPT":
