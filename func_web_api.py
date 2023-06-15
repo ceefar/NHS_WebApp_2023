@@ -18,6 +18,14 @@ def check_pulse():
         print(f"\n- - - - - - - - - -\n[ DB Status : DED ]\n- - - - - - - - - -\n")
     # print(f"{res = }")
 
+def get_trust_curr_wait_time_for_a_department(user_department, user_trust):
+    query = f"SELECT hospital_name, `{user_department}` FROM first_apt \
+                WHERE hospital_name = '{user_trust}' AND DATE(created_on) = CURDATE();"
+    res = db.secure_get_from_db(query, None)
+    print(f"{res = }")
+    return res
+
+# -- delete this --
 def get_db_accurate_hospital_names():
     """ am 100% guna hardcode this but ideally would add some additional check that would check db names and hardcoded names match each day, if not inform me (via failed action), could even be a every other day kinda thing too """
     query = "SELECT DISTINCT(hospital_name) FROM `first_apt`"
