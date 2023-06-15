@@ -1,0 +1,11 @@
+[ Day 2 : 15/06 ]
+- added both wait times to db on cicd pipeline (first appointment avg wait and treatment avg wait)
+
+
+
+
+# [DONE]
+# ADDED ALL MIDS HOSPS
+# ADDED NEW TABLE FOR AVG WAIT (NOT JUST FIRST APT)
+# ADD AVG TREATMENT TIME, MAKE THEM BOTH METRICS
+# STORED PROCEDURE FOR FIRST_APT AVERAGES IN NEW TABLE

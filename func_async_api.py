@@ -10,11 +10,11 @@ import json
 import urllib.error
 import datetime
 import time
-# -- unused imports --
-import requests
 # -- internal imports --
 from func_misc import *
 from cls_db import Database
+# -- currently unused imports --
+import requests
 
 # -- global db conn --
 db = Database()
@@ -101,7 +101,7 @@ def get_region_from_name(hospital_name:str) -> str:
     return(region)
 
 def add_first_wait_times_to_db_sync(hospital_data):
-    """ for one hospital """
+    """ for one hospital, wait (in weeks) until first appointment """
     # preset our variables to false, which we will turn on if the valid departments data is found
     want_breast, want_cardiology, want_cardiothoracic = False, False, False
     want_clinical_haemotology, want_colorectal, want_dermatology, want_ear = False, False, False, False
@@ -123,7 +123,6 @@ def add_first_wait_times_to_db_sync(hospital_data):
                     "Respiratory Medicine": want_respiratory, "Rheumatology": want_rheumatology,
                     "Spinal Surgery": want_spinal, "Trauma and Orthopaedic": want_trauma,
                     "Upper Gastrointestinal Surgery": want_upper, "Urology": want_urology, "Vascular Surgery":want_vascular}
-
     # sort it alphabetically so it matches the flags
     data_dict=dict(sorted(hospital_data[1].items(), key=lambda item: item[0]))
     # loop the data, and prepare to be inserted for the hospital (only one hospital)
@@ -147,6 +146,54 @@ def add_first_wait_times_to_db_sync(hospital_data):
                         dep_dict["Pain Management"], dep_dict["Plastic Surgery"], dep_dict["Respiratory Medicine"],
                         dep_dict["Rheumatology"], dep_dict["Spinal Surgery"], dep_dict["Trauma and Orthopaedic"],
                         dep_dict["Upper Gastrointestinal Surgery"], dep_dict["Urology"], dep_dict["Vascular Surgery"])
+
+# N0TE - PLEASE JUST CREATE ONE FUNCTION TO HANDLE BOTH!
+def add_avg_wait_times_to_db_sync(hospital_data):
+    """ for one hospital, wait (in weeks) until treatment (tbc) """
+    # preset our variables to false, which we will turn on if the valid departments data is found
+    want_breast, want_cardiology, want_cardiothoracic = False, False, False
+    want_clinical_haemotology, want_colorectal, want_dermatology, want_ear = False, False, False, False
+    want_gastroenterology, want_general, want_general_surgery, want_gynaecology = False, False, False, False
+    want_maxillofacial, want_neurology, want_neurosurgical = False, False, False
+    want_ophthalmology, want_oral, want_paediatric = False, False, False
+    want_paediatric_surgery, want_pain, want_plastic = False, False, False    
+    want_respiratory, want_rheumatology, want_spinal  = False, False, False 
+    want_trauma, want_upper, want_urology, want_vascular  = False, False, False, False
+    # --
+    dep_dict = {"Breast Surgery": want_breast, "Cardiology": want_cardiology, "Cardiothoracic Surgery":want_cardiothoracic,
+                    "Clinical Haematology": want_clinical_haemotology, "Colorectal Surgery": want_colorectal , "Dermatology": want_dermatology,
+                    "Ear Nose and Throat": want_ear, "Gastroenterology": want_gastroenterology, 
+                    "General Internal Medicine": want_general, "General Surgery": want_general_surgery, "Gynaecology":want_gynaecology, 
+                    "Maxillofacial Surgery": want_maxillofacial, "Neurology": want_neurology , "Neurosurgical": want_neurosurgical,
+                    "Ophthalmology": want_ophthalmology , "Oral Surgery": want_oral,
+                    "Paediatric": want_paediatric, "Paediatric Surgery": want_paediatric_surgery,
+                    "Pain Management": want_pain, "Plastic Surgery": want_plastic,
+                    "Respiratory Medicine": want_respiratory, "Rheumatology": want_rheumatology,
+                    "Spinal Surgery": want_spinal, "Trauma and Orthopaedic": want_trauma,
+                    "Upper Gastrointestinal Surgery": want_upper, "Urology": want_urology, "Vascular Surgery":want_vascular}
+    # sort it alphabetically so it matches the flags
+    data_dict=dict(sorted(hospital_data[1].items(), key=lambda item: item[0]))
+    # loop the data, and prepare to be inserted for the hospital (only one hospital)
+    params_list = []
+    params_list.append(hospital_data[0])
+    params_list.append(get_region_from_name(hospital_data[0]))
+    for department, wait_times in data_dict.items():
+        if department in dep_dict.keys():
+            dep_dict[department] = True
+            params_list.append(wait_times[1])
+    # --
+    params_list = tuple(params_list)
+    # --
+    # always 1, then minus 1 as it has the hopsital name
+    insert_db_data([params_list], (len(params_list) - 1), dep_dict["Breast Surgery"], dep_dict["Cardiology"], dep_dict["Cardiothoracic Surgery"],
+                        dep_dict["Clinical Haematology"], dep_dict["Colorectal Surgery"], dep_dict["Dermatology"],
+                        dep_dict["Ear Nose and Throat"], dep_dict["Gastroenterology"], dep_dict["General Internal Medicine"],
+                        dep_dict["General Surgery"], dep_dict["Gynaecology"], dep_dict["Maxillofacial Surgery"],
+                        dep_dict["Neurology"], dep_dict["Neurosurgical"], dep_dict["Ophthalmology"],
+                        dep_dict["Oral Surgery"], dep_dict["Paediatric"], dep_dict["Paediatric Surgery"],
+                        dep_dict["Pain Management"], dep_dict["Plastic Surgery"], dep_dict["Respiratory Medicine"],
+                        dep_dict["Rheumatology"], dep_dict["Spinal Surgery"], dep_dict["Trauma and Orthopaedic"],
+                        dep_dict["Upper Gastrointestinal Surgery"], dep_dict["Urology"], dep_dict["Vascular Surgery"], table_name="avg_wait")
 
 # naming convension is just the first word except for clinical haemotology, general surgery, and paediatric surgery which are both words (full string)
 def insert_db_data(entries:list[tuple], amount_of_departments:int, want_breast:bool = False, want_cardiology:bool = False,
@@ -208,15 +255,15 @@ def insert_db_data(entries:list[tuple], amount_of_departments:int, want_breast:b
             # send off the query
             db.secure_add_to_db(sql, param_tuple)
 
-def create_base_first_apt_table():
+def create_base_first_apt_tables():
     """
     //desc : create wait to first appointment table, 27 departments, note back ticks are necessary due to spaces in department names, could add hospital_code too
     //params :
     //returns :
     """
-    print(f"\n- - - - - - - - - -\n[ Checking For Base Table ]\n- - - - - - - - - -")
-    # -- table creation query --  
-    query = "CREATE TABLE IF NOT EXISTS first_apt (id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, hospital_name VARCHAR(200) NOT NULL, hospital_region VARCHAR(20) NOT NULL,\
+    print(f"\n- - - - - - - - - -\n[ Checking For Base Tables ]\n- - - - - - - - - -")
+    # -- table creation queries --  
+    first_apt_table_query = "CREATE TABLE IF NOT EXISTS first_apt (id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, hospital_name VARCHAR(200) NOT NULL, hospital_region VARCHAR(20) NOT NULL,\
             `Breast Surgery` INT(3) NULL, Cardiology INT(3) NULL, `Cardiothoracic Surgery` INT(3) NULL, `Clinical Haematology` INT(3) NULL, \
             `Colorectal Surgery` INT(3) NULL, Dermatology INT(3) NULL, `Ear Nose and Throat` INT(3) NULL, Gastroenterology INT(3) NULL, \
             `General Surgery` INT(3) NULL, Gynaecology INT(3) NULL, `General Internal Medicine` INT(3) NULL,`Maxillofacial Surgery` INT(3) NULL, \
@@ -225,5 +272,37 @@ def create_base_first_apt_table():
             `Respiratory Medicine` INT(3) NULL, Rheumatology INT(3) NULL, `Spinal Surgery` INT(3) NULL, `Trauma and Orthopaedic` INT(3) NULL, \
             `Upper Gastrointestinal Surgery` INT(3) NULL, Urology INT(3) NULL, `Vascular Surgery` INT(3) NULL, \
             created_on datetime NOT NULL DEFAULT CURRENT_TIMESTAMP);"
-    # -- commit the table to db -- 
-    db.secure_add_to_db(query)
+    avg_wait_table_query = "CREATE TABLE IF NOT EXISTS avg_wait (id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, hospital_name VARCHAR(200) NOT NULL, hospital_region VARCHAR(20) NOT NULL,\
+            `Breast Surgery` INT(3) NULL, Cardiology INT(3) NULL, `Cardiothoracic Surgery` INT(3) NULL, `Clinical Haematology` INT(3) NULL, \
+            `Colorectal Surgery` INT(3) NULL, Dermatology INT(3) NULL, `Ear Nose and Throat` INT(3) NULL, Gastroenterology INT(3) NULL, \
+            `General Surgery` INT(3) NULL, Gynaecology INT(3) NULL, `General Internal Medicine` INT(3) NULL,`Maxillofacial Surgery` INT(3) NULL, \
+            Neurology INT(3) NULL, Neurosurgical INT(3) NULL, Ophthalmology INT(3) NULL, `Oral Surgery` INT(3) NULL, \
+            Paediatric INT(3) NULL, `Paediatric Surgery` INT(3) NULL, `Pain Management` INT(3) NULL, `Plastic Surgery` INT(3) NULL, \
+            `Respiratory Medicine` INT(3) NULL, Rheumatology INT(3) NULL, `Spinal Surgery` INT(3) NULL, `Trauma and Orthopaedic` INT(3) NULL, \
+            `Upper Gastrointestinal Surgery` INT(3) NULL, Urology INT(3) NULL, `Vascular Surgery` INT(3) NULL, \
+            created_on datetime NOT NULL DEFAULT CURRENT_TIMESTAMP);"
+    averages_table_query = "CREATE TABLE IF NOT EXISTS daily_department_averages_mids ( \
+            id INT AUTO_INCREMENT PRIMARY KEY, date DATE NOT NULL, avg_breast_surgery DECIMAL(5,2), avg_cardiology DECIMAL(5,2), avg_cardiothoracic_surgery DECIMAL(5,2), avg_clinical_haematology DECIMAL(5,2), avg_colorectal_surgery DECIMAL(5,2), avg_dermatology DECIMAL(5,2), avg_ent DECIMAL(5,2), avg_gastroenterology DECIMAL(5,2), avg_general_surgery DECIMAL(5,2), \
+            avg_gynaecology DECIMAL(5,2), avg_general_internal_medicine DECIMAL(5,2), avg_maxillofacial_surgery DECIMAL(5,2), avg_neurology DECIMAL(5,2), avg_neurosurgical DECIMAL(5,2), avg_ophthalmology DECIMAL(5,2), avg_oral_surgery DECIMAL(5,2), avg_paediatric DECIMAL(5,2), avg_paediatric_surgery DECIMAL(5,2), avg_pain_management DECIMAL(5,2), \
+            avg_plastic_surgery DECIMAL(5,2), avg_respiratory_medicine DECIMAL(5,2), avg_rheumatology DECIMAL(5,2), avg_spinal_surgery DECIMAL(5,2), avg_trauma_orthopaedic DECIMAL(5,2), avg_upper_gi_surgery DECIMAL(5,2), avg_urology DECIMAL(5,2), avg_vascular_surgery DECIMAL(5,2))"
+    # -- commit the tables to db -- 
+    table_queries = [first_apt_table_query, avg_wait_table_query, averages_table_query]
+    [db.secure_add_to_db(table_query) for table_query in table_queries] 
+
+
+def run_averages_stored_procedure():
+    # -- check if table has data for the current day
+    today = datetime.date.today()
+    query = f"SELECT COUNT(*) FROM daily_department_averages_mids WHERE date = '{today}';"
+    result = db.secure_get_from_db(query)
+    data_exists = result[0][0]
+    # -- if data doesnt exist then run the stored procedure to process the averages for first_apts in mids --
+    if data_exists == 0:
+        print(f"\n- - - - - - - - - -\n[ Running Stored Procedure ]\n- - - - - - - - - -")
+        query = "CALL InsertDailyAverages();"
+        db.secure_add_to_db(query) 
+        print(f"\n- - - - - - - - - -\n[ First Apt Averages Data Updated Successfully ]\n- - - - - - - - - -")
+    else:
+        print(f"\n- - - - - - - - - -\n[ Skipping Stored Procedure Execution As Data Exists ]\n- - - - - - - - - -")
+
+

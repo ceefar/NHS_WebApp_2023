@@ -27,10 +27,16 @@ openai.api_key = OPENAI_API_KEY
 # -- st cached api functions --
 
 @st.cache_data
-def get_trust_curr_wait_time_for_a_department(user_department, user_trust):
-    wait_time_data = webapi.get_trust_curr_wait_time_for_a_department(user_department, user_trust)
+def get_trust_curr_avg_wait_time_for_a_department(user_department, user_trust):
+    wait_time_data = webapi.get_trust_curr_avg_wait_time_for_a_department(user_department, user_trust)
     print(f"{wait_time_data = }")
-    return wait_time_data
+    return wait_time_data[0]
+
+@st.cache_data
+def get_trust_curr_first_apt_for_a_department(user_department, user_trust):
+    wait_time_data = webapi.get_trust_curr_first_apt_for_a_department(user_department, user_trust)
+    print(f"{wait_time_data = }")
+    return wait_time_data[0]
 
 @st.cache_data
 def get_hospital_names_for_region(region): # note isnt an api function was just due to setup, can actually untangled/abstract out just to where its relevant
@@ -55,8 +61,12 @@ def main():
             user_department_entry = st.selectbox(label="Select a Department", options=Misc.departments_list)
             user_region_entry = st.selectbox(label="Select a Region", options=[region.title() for region in Misc.regions_list.keys()]) # formats the region list to title case
             user_trust_entry = st.selectbox(label="Select an NHS Trust", options=get_hospital_names_for_region(Misc.regions_list[user_region_entry.lower()])) # must convert the param back to lower because of this
-            trust_first_apt_wait_time_from_db = get_trust_curr_wait_time_for_a_department(user_department_entry, user_trust_entry)
-            st.write(trust_first_apt_wait_time_from_db)
+            trust_first_apt_wait_time_from_db = get_trust_curr_first_apt_for_a_department(user_department_entry, user_trust_entry)
+            trust_avg_wait_time_from_db = get_trust_curr_avg_wait_time_for_a_department(user_department_entry, user_trust_entry)
+            st.divider()
+            st.markdown(f"##### {trust_first_apt_wait_time_from_db[0]}")
+            st.metric(label="First Appointment Avg Wait", value=trust_first_apt_wait_time_from_db[1])
+            st.metric(label="Treatment Avg Wait", value=trust_avg_wait_time_from_db[1])
         elif app_mode == "NHS GPT":
             st.markdown("##### NHS GPT")
             user_chat_entry = st.text_input(label="What wait time information would you like to know?", value="What are the wait times for Neurology at Barts NHS Trust?", help="E.g. What are the wait times for `DEPARTMENT` at `NHS TRUST`")
@@ -66,13 +76,28 @@ if __name__ == "__main__":
     main()
 
 
-# EXPAND TO ALL MIDLANDS HOSPS FOR CICD NOW PLS! - AND BARTS TOO!
-# AND ACTUALLY YH USE A CACHED FUNCTION TO GET NAMES FROM THE DB INSTEAD WHILE WE ARE TESTING 100%!
 
-# BE SURE TO N0TE CURRENTLY WE ARE DOING First appointment wait times!!!!!
-# DISPLAY SOME INFO FROM THE DB USING CACHED WEB API MODULE HERE QUICKLY
-# THEN DO THE WHOLE AVGS THING (basically exactly as below lmao)
-# FFS THEN REMEMBER WE NEED BOTH TABLES NOT JUST 1 
+# [DONE]
+# ADDED ALL MIDS HOSPS
+# ADDED NEW TABLE FOR AVG WAIT (NOT JUST FIRST APT)
+# ADD AVG TREATMENT TIME, MAKE THEM BOTH METRICS
+# STORED PROCEDURE FOR FIRST_APT AVERAGES IN NEW TABLE
+
+
+
+# ADD AVERAGES TO WEB APP
+# IMPROVE THE OTHER METRIC DISPLAY
+# - start thinking about specific usecases now please, particularly own version!
+# ADD BARTS AND A FEW OTHER LONDON HOSPS TOO!
+# - including the averages table
+# - actually just do all london too
+# AND ACTUALLY YH USE A CACHED FUNCTION TO GET NAMES FROM THE DB INSTEAD WHILE WE ARE TESTING 100%!
+# DO POSTCODES
+# PUT ON CLOUD!
+# ADD THE OTHER AVERAGE TO THE DB TOO!
+# ADD THE CHATBOT
+# CLASS BASED AND DESIGN PATTERNS x DATA STRUCTURES
+
 
 
 # DO THE REGION STUFF AS A FUNCTION AND CACHE IT

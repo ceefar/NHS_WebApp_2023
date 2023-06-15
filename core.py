@@ -12,7 +12,7 @@ from func_async_api import *
 async def main() -> None:
     # --
     print(f"\n- - - - - - - - - -\n[ Running CICD Pipeline ]\n- - - - - - - - - -\n")
-    start_time = time.time()
+    
     # --
     hospital_codes = ['RBK', 'RFS', 'RJC', 'RJE', 'RK5', 'RKB', 'RL1', 'RL4', 'RLQ', 'RLT', 'RNA', 'RNQ', 'RNS', 'RQ3', 'RRJ', 'RRK', 'RTG', 'RWD', 'RWE', 'RWP', 'RX1', 'RXK', 'RXW']
     # --
@@ -22,20 +22,26 @@ async def main() -> None:
     print(f"- - - - - - - - - -\n[ Inserting New Hospital Data ]\n- - - - - - - - - -\n")
     for hospital_data in hospital_data_list:
         add_first_wait_times_to_db_sync(hospital_data)
+        add_avg_wait_times_to_db_sync(hospital_data)
+    # --
+    
+
+
+# -- driver --    
+if __name__ == "__main__": 
+    # --
+    start_time = time.time()
+    # --
+    create_base_first_apt_tables()
+    asyncio.run(main()) 
+    run_averages_stored_procedure()
     # --
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"\n- - - - - - - - - -\n[ COMPLETE ]\n - Completed In {elapsed_time}s\n- - - - - - - - - -\n")
 
 
-# -- driver --    
-if __name__ == "__main__": 
-    create_base_first_apt_table()
-    asyncio.run(main()) 
 
-
-
-# RENAME DB TABLE FROM FIRST_APT TO WAIT_TIMES PLEASE! 
 
 
 
