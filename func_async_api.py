@@ -305,6 +305,7 @@ def run_averages_stored_procedure():
         if data_exists == 0:
             print(f"\n- - - - - - - - - -\n[ Running Stored Procedure - {region.title()} ]\n- - - - - - - - - -")
             query = f"CALL InsertDailyAverages{region.title()}();"
+            print(f"{query = }")
             db.secure_add_to_db(query) 
             print(f"\n- - - - - - - - - -\n[ First Apt Averages Data Updated Successfully ]\n- - - - - - - - - -")
         else:
