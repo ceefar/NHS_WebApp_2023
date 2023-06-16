@@ -1,6 +1,8 @@
 # -- author : ceefar --
 # -- project : nhs etl 2023 --
 
+# -- imports --
+import datetime
 # -- internal imports --
 from cls_db import Database
 
@@ -46,6 +48,14 @@ def get_min_max_first_apt_wait_for_department_and_region(user_department, user_r
     res = db.secure_get_from_db(query, None)
     return res
 
+def get_min_max_first_apt_wait_for_department_countrywide(user_department):    
+    current_date = datetime.date.today()
+    formatted_date = current_date.strftime("%Y-%m-%d")
+    print(f"{formatted_date = }")
+    query = f"SELECT hospital_name, hospital_region, `{user_department}` AS wait_time FROM avg_wait WHERE DATE(created_on) = '{formatted_date}' AND `{user_department}` IN (SELECT MIN(`{user_department}`) FROM avg_wait WHERE DATE(created_on) = '{formatted_date}' UNION SELECT MAX(`{user_department}`) FROM avg_wait WHERE DATE(created_on) = '{formatted_date}');"
+    res = db.secure_get_from_db(query, None)
+    return res
+
 # -- leave this for now but will delete and hardcode once db and cicd pipeline is completed --
 def get_db_accurate_hospital_names():
     """ am 100% guna hardcode this but ideally would add some additional check that would check db names and hardcoded names match each day, if not inform me (via failed action), could even be a every other day kinda thing too """
@@ -58,3 +68,5 @@ def get_db_accurate_hospital_names():
 if __name__ == "__main__":
     check_pulse()
 
+# add this to notes, query for getting all hosp codes from a region from old db
+# "SELECT hospital_code FROM nhs_hosp_codes WHERE hospital_name IN (SELECT hospital_name FROM first_apt WHERE hospital_region = 'swest');"

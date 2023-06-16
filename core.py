@@ -15,10 +15,14 @@ async def main() -> None:
     
     # --
     mids_hospital_codes = ['RBK', 'RFS', 'RJC', 'RJE', 'RK5', 'RKB', 'RL1', 'RL4', 'RLQ', 'RLT', 'RNA', 'RNQ', 'RNS', 'RQ3', 'RRJ', 'RRK', 'RTG', 'RWD', 'RWE', 'RWP', 'RX1', 'RXK', 'RXW']
-    london_hospital_codes = ["R1H", "R1K", "RAL", "RF4", "RJ1", "RJ2"]
+    london_hospital_codes = ["R1H", "R1K", "RAL", "RAN", "RAP", "RAS", "RAX", "RJ1", "RJ2", "RJ6", "RJ7", "RJZ", "RKE", "RP6", "RQM", "RQX", "RRV", "RVR", "RYJ", "RF4"]
+    swest_hospital_codes = ["R0D", "RA4", "RA7", "RA9", "RBD", "RD1", "REF", "RH5", "RH8", "RK9", "RN3", "RNZ", "RTE", "RVJ"]
+    ney_hospital_codes = ["R0B", "RAE", "RCB", "RCD", "RCF", "RFF", "RFR", "RHQ", "RJL", "RNN", "RR7", "RR8", "RTD", "RTF", "RTR", "RVW", "RWA", "RWY", "RXF", "RXP"]
     hospital_codes = []
     hospital_codes.extend(mids_hospital_codes)
     hospital_codes.extend(london_hospital_codes)
+    hospital_codes.extend(swest_hospital_codes)
+    hospital_codes.extend(ney_hospital_codes)
     # --
     webpage_data_list = await asyncio.gather(*[get_page_data(f"https://www.myplannedcare.nhs.uk/mpcjson/{code}.json") for code in set(hospital_codes)])
     hospital_data_list = await asyncio.gather(*[make_new_hospital_data_dict(hospital) for hospital in webpage_data_list])
@@ -46,6 +50,14 @@ if __name__ == "__main__":
 
 
 
+# TOD0!
+# -----
+# DISPLAY SWEST AND NEY AVGS IN PROPER METRIC COL DISPLAY
+# NEW CACHED API CODE FOR FASTEST AND SLOWEST IN THE COUNTRY TING TOO (USING SQL OBVS)
+# POSTCODE AND MAPS STUFF
+# CHOOSE BY DAY
+# DEL ALL DATA AND SEE IF CICD STILL WORKS
+# ON CLOUD
 
 
 

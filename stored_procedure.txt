@@ -1,9 +1,9 @@
 
 DELIMITER //
 
-CREATE PROCEDURE InsertDailyAverages()
+CREATE PROCEDURE InsertDailyAveragesSwest()
 BEGIN
-    INSERT INTO daily_department_averages_mids
+    INSERT INTO daily_department_averages_swest
         (
             date, 
             avg_breast_surgery, 
@@ -66,7 +66,7 @@ BEGIN
     FROM 
         first_apt
     WHERE 
-        hospital_region = 'mids';
+        hospital_region = 'swest';
 END//
 
 DELIMITER ;
