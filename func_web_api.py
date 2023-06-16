@@ -42,11 +42,8 @@ def get_mids_daily_avg_first_apt(user_department):
     return res[0][0]
 
 def get_min_max_first_apt_wait_for_department_and_region(user_department, user_region):
-    print(f"{user_department = }")
-    print(f"{user_region = }")
     query = f"SELECT (SELECT hospital_name FROM first_apt WHERE hospital_region = '{user_region}' ORDER BY `{user_department}` ASC LIMIT 1) AS hospital_min_wait, (SELECT MIN(`{user_department}`) FROM first_apt WHERE hospital_region = '{user_region}') AS min_{user_department.lower().replace(' ','_')}_wait_time, (SELECT hospital_name FROM first_apt WHERE hospital_region = '{user_region}' ORDER BY `{user_department}` DESC LIMIT 1) AS hospital_max_wait, (SELECT MAX(`{user_department}`) FROM first_apt WHERE hospital_region = '{user_region}') AS max_{user_department.lower().replace(' ','_')}_wait_time;"
     res = db.secure_get_from_db(query, None)
-    print(f"{res = }")
     return res
 
 # -- leave this for now but will delete and hardcode once db and cicd pipeline is completed --
