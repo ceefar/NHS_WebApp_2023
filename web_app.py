@@ -118,6 +118,11 @@ def main():
         st.metric(label="ALL MIDLANDS Avg Wait", value=f"{float(mids_avg):.1f}")
         st.divider()
 
+        # --
+        st.write("Fastest Slowest Countrywide")
+        rv = webapi.get_min_max_first_apt_wait_for_department_countrywide(user_department_entry)
+        st.write(rv)
+
         
 
     elif app_mode == "NHS GPT":
@@ -128,6 +133,10 @@ def main():
 if __name__ == "__main__":
     main()
 
+
+
+
+# SERIOUSLY IS PROBABLY JUST BEST TO EXPAND THE DATASET AND FINISH THE CICD FIRST YANNO JUST SAYIN
 
 # REGIONAL AVERAGES
 

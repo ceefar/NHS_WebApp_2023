@@ -289,6 +289,14 @@ def create_base_first_apt_tables():
             id INT AUTO_INCREMENT PRIMARY KEY, date DATE NOT NULL, avg_breast_surgery DECIMAL(5,2), avg_cardiology DECIMAL(5,2), avg_cardiothoracic_surgery DECIMAL(5,2), avg_clinical_haematology DECIMAL(5,2), avg_colorectal_surgery DECIMAL(5,2), avg_dermatology DECIMAL(5,2), avg_ent DECIMAL(5,2), avg_gastroenterology DECIMAL(5,2), avg_general_surgery DECIMAL(5,2), \
             avg_gynaecology DECIMAL(5,2), avg_general_internal_medicine DECIMAL(5,2), avg_maxillofacial_surgery DECIMAL(5,2), avg_neurology DECIMAL(5,2), avg_neurosurgical DECIMAL(5,2), avg_ophthalmology DECIMAL(5,2), avg_oral_surgery DECIMAL(5,2), avg_paediatric DECIMAL(5,2), avg_paediatric_surgery DECIMAL(5,2), avg_pain_management DECIMAL(5,2), \
             avg_plastic_surgery DECIMAL(5,2), avg_respiratory_medicine DECIMAL(5,2), avg_rheumatology DECIMAL(5,2), avg_spinal_surgery DECIMAL(5,2), avg_trauma_orthopaedic DECIMAL(5,2), avg_upper_gi_surgery DECIMAL(5,2), avg_urology DECIMAL(5,2), avg_vascular_surgery DECIMAL(5,2))"
+    averages_table_swest_query = "CREATE TABLE IF NOT EXISTS daily_department_averages_swest ( \
+            id INT AUTO_INCREMENT PRIMARY KEY, date DATE NOT NULL, avg_breast_surgery DECIMAL(5,2), avg_cardiology DECIMAL(5,2), avg_cardiothoracic_surgery DECIMAL(5,2), avg_clinical_haematology DECIMAL(5,2), avg_colorectal_surgery DECIMAL(5,2), avg_dermatology DECIMAL(5,2), avg_ent DECIMAL(5,2), avg_gastroenterology DECIMAL(5,2), avg_general_surgery DECIMAL(5,2), \
+            avg_gynaecology DECIMAL(5,2), avg_general_internal_medicine DECIMAL(5,2), avg_maxillofacial_surgery DECIMAL(5,2), avg_neurology DECIMAL(5,2), avg_neurosurgical DECIMAL(5,2), avg_ophthalmology DECIMAL(5,2), avg_oral_surgery DECIMAL(5,2), avg_paediatric DECIMAL(5,2), avg_paediatric_surgery DECIMAL(5,2), avg_pain_management DECIMAL(5,2), \
+            avg_plastic_surgery DECIMAL(5,2), avg_respiratory_medicine DECIMAL(5,2), avg_rheumatology DECIMAL(5,2), avg_spinal_surgery DECIMAL(5,2), avg_trauma_orthopaedic DECIMAL(5,2), avg_upper_gi_surgery DECIMAL(5,2), avg_urology DECIMAL(5,2), avg_vascular_surgery DECIMAL(5,2))"
+    averages_table_ney_query = "CREATE TABLE IF NOT EXISTS daily_department_averages_ney ( \
+            id INT AUTO_INCREMENT PRIMARY KEY, date DATE NOT NULL, avg_breast_surgery DECIMAL(5,2), avg_cardiology DECIMAL(5,2), avg_cardiothoracic_surgery DECIMAL(5,2), avg_clinical_haematology DECIMAL(5,2), avg_colorectal_surgery DECIMAL(5,2), avg_dermatology DECIMAL(5,2), avg_ent DECIMAL(5,2), avg_gastroenterology DECIMAL(5,2), avg_general_surgery DECIMAL(5,2), \
+            avg_gynaecology DECIMAL(5,2), avg_general_internal_medicine DECIMAL(5,2), avg_maxillofacial_surgery DECIMAL(5,2), avg_neurology DECIMAL(5,2), avg_neurosurgical DECIMAL(5,2), avg_ophthalmology DECIMAL(5,2), avg_oral_surgery DECIMAL(5,2), avg_paediatric DECIMAL(5,2), avg_paediatric_surgery DECIMAL(5,2), avg_pain_management DECIMAL(5,2), \
+            avg_plastic_surgery DECIMAL(5,2), avg_respiratory_medicine DECIMAL(5,2), avg_rheumatology DECIMAL(5,2), avg_spinal_surgery DECIMAL(5,2), avg_trauma_orthopaedic DECIMAL(5,2), avg_upper_gi_surgery DECIMAL(5,2), avg_urology DECIMAL(5,2), avg_vascular_surgery DECIMAL(5,2))"
     # -- commit the tables to db -- 
     table_queries = [first_apt_table_query, avg_wait_table_query, averages_table_mids_query, averages_table_london_query]
     [db.secure_add_to_db(table_query) for table_query in table_queries] 
@@ -296,7 +304,7 @@ def create_base_first_apt_tables():
 def run_averages_stored_procedure():
     # -- check if table has data for the current day
     today = datetime.date.today()
-    regions = ["mids", "london"]
+    regions = ["mids", "london", "swest", "ney"]
     for region in regions:
         query = f"SELECT COUNT(*) FROM daily_department_averages_{region} WHERE date = '{today}';"
         result = db.secure_get_from_db(query)
@@ -306,7 +314,7 @@ def run_averages_stored_procedure():
             print(f"\n- - - - - - - - - -\n[ Running Stored Procedure - {region.title()} ]\n- - - - - - - - - -")
             query = f"CALL InsertDailyAverages{region.title()}();"
             db.secure_add_to_db(query) 
-            print(f"\n- - - - - - - - - -\n[ First Apt Averages Data Updated Successfully ]\n- - - - - - - - - -")
+            print(f"\n- - - - - - - - - -\n[ First Apt Averages Data [ {region.title()} ] Updated Successfully ]\n- - - - - - - - - -")
         else:
             print(f"\n- - - - - - - - - -\n[ Skipping Stored Procedure [ {region.title()} ] Execution As Data Exists ]\n- - - - - - - - - -")
 
