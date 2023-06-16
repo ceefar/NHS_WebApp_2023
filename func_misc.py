@@ -10,6 +10,15 @@ JSONList = list[JSON]
 # -- general globals --
 header = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"}
 
+# -- write me plis ceefar --
+def get_cleaned_dept(user_department):
+    if user_department == "Ear Nose and Throat":
+        return "ent" 
+    elif user_department == "Trauma and Orthopaedic":
+        return "trauma orthopaedic"
+    else:
+        return user_department
+
 # -- misc class --
 class Misc:
     regions_list = {"midlands":"mids", "london":"london","north east and yorkshire":"ney", "south west":"swest"}
