@@ -7,12 +7,12 @@ name: get_fresh_nhs_data
 # -- on schedule and on open pr --
 on:
   schedule:
-    - cron: "0 */3 * * *" # and every 3 hours
+    - cron: "0 */6 * * *" # and every 6 hours
     # - cron: '*/20 * * * *' # run every 20 minutes while testing
     # - cron: "50 06 * * *" # run every day at 5:50am      
     # - cron: "01 01 * * *" # and run every day at 1:01am
   pull_request:
-    types: [opened] # on open new pr also  
+    types: [opened] # & on open new pr   
 
 jobs:
   build:
