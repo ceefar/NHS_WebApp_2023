@@ -5,9 +5,11 @@
 
 # -- imports --
 import streamlit as st
-from dotenv import load_dotenv
 import os
 import openai
+import folium
+from streamlit_folium import folium_static
+from dotenv import load_dotenv
 # -- internal imports --
 import func_web_api as webapi
 from func_misc import Misc, get_cleaned_dept
@@ -56,11 +58,18 @@ def get_hospital_names_for_region(region): # note isnt an api function was just 
     return regions_hospital_names_list
 
 
+# -- TEMP AF --
+def display_temp_faux_map():
+    initial_location = [50.389484405517578, -3.9596600532531738]
+    folium_map = folium.Map(location=initial_location, zoom_start=12)
+    folium.Marker(location=initial_location, popup="Your Location").add_to(folium_map)
+    folium_static(folium_map, width=400, height=400) # doesnt properly resize oof
+
 # -- 
 def main():
     # --
     st.markdown(f"### NHS Web App")
-    st.divider()
+    st.write("###")
     # --
     with st.sidebar:
         app_mode = st.radio(label="Select a Mode", options=["Manual", "NHS GPT"])
@@ -85,15 +94,16 @@ def main():
         trust_avg_wait_time_from_db_name, trust_avg_wait_time_from_db_wait_time = get_trust_curr_avg_wait_time_for_a_department(user_department_entry, user_trust_entry)
         min_max_for_dept_x_region = webapi.get_min_max_first_apt_wait_for_department_and_region(user_department_entry, user_region_shortcode)
 
-        # --
-        st.markdown(f"##### Selected Hospital :")
-        st.markdown(f"{trust_first_apt_wait_time_from_db_name}")
-        trust_wait_col_1, trust_wait_col_2 = st.columns([1,1])
-        with trust_wait_col_1:
+        # -- temp faux map --
+
+        st.markdown(f"#### {trust_first_apt_wait_time_from_db_name}")
+        temp_col_1, temp_col_2 = st.columns(2)
+        with temp_col_1:
             st.metric(label="First Appointment Avg Wait", value=trust_first_apt_wait_time_from_db_wait_time)
-        with trust_wait_col_2:
+        with temp_col_2:
             st.metric(label="Treatment Avg Wait", value=trust_avg_wait_time_from_db_wait_time)
         st.divider()
+
 
         # --
         st.markdown("##### Regional Min Max Snapshot [First Appointment Wait Times]")
@@ -134,59 +144,44 @@ if __name__ == "__main__":
     main()
 
 
+# SO RNRN
+# - put on cloud
+# - check out the ui on mobile
+# - do below new version thing and maybe quickly test thing too
+#   - make small mobile changes to ui while doing this
+# - continue with completing the backend  
+#   - as ui really doesnt matter and id rather just have working backend to use this myself and then do sumnt new even if that is a game
 
+# NEW VERSION
+# NEW UI TO HAVE 
+# - TABS
+# - FIRST TAB FASTEST
+#   - THIS CAN SHOW REGIONS AND COUNTRYWIDE!
+# - SECOND TAB SLOWEST
+# - THIRD TAB RANK
 
-# SERIOUSLY IS PROBABLY JUST BEST TO EXPAND THE DATASET AND FINISH THE CICD FIRST YANNO JUST SAYIN
+# QUICKLY TEST
+# - ask gpt all maps in trust
 
-# REGIONAL AVERAGES
+# UI
+# - add in this nationwide min max and quickly 
+# - all currently available regional averages
+# - this rank idea in some visualiser
+# - add back on button press
+# - overhaul the ui
+# - custom css components
+# - show hospital on map n ting
+#   - all the info on a trust, i.e. the hospitals + their details, how close to postcode, etc (use nhs csv and old code for maps stuff surely duh?)
+# - postcodes ting
 
-# NATIONWIDE MIN MAX
-# - maybe just for regions and then you can go do that yourself if you want (i.e. to see that region u can just go select it? - would be fine for now anyways)
+# BACKEND
+# - all regions
+# - all averages table
+# - all stored procedures
+# - cicd
+# - singleton the connection?
 
-# CONTINUE TO BELOW POSTCODES N TING!
-# - YOU WANT TO BE ABLE TO VIEW THE INFO ON A TRUST I.E THE HOSPITALS AND DETAILS AND THEIR RELATION TO YOU
-# - CAN ALL BE DONE VIA THE NHS CSV AND BASICALLY JUST THE OLD CODE FOR MAPS N STUFF
-
-# ADD BACK ON BUTTON PRESS BTW DUHHHHH!
-
-# COMPLETE THE BACKEND STUFF
-
-# SINGLETON CONNECTION THING SO WE DONT LOAD AND RECONNECT EVERY TIME?
-
-# THEN
-# POSTCODES AND MAP STUFF
-# PUT ON CLOUD
-# ABILITY TO GO BACK IN TIME WITH WHOLE DATE PASSING THING TO WEB_API FUNCTIONS PLEASE, DO THIS BY HAVING A CAL IN SIDEBAR!
-# DATACLASSES AND CLASS BASED STRUCTURE! (and data structures x design patterns)
-# CHATBOT STUFF
- 
-# FOR FASTEST AND SLOWEST, I.E MIN MAX, DO IN SQL QUERY AND CACHE IT BOSH! <<<<<<<<<<<<<<<<<<<<<<<<<<<<< THIS FIRST RNRN OMG MAN! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-# IMPROVE THE OTHER METRIC DISPLAY
-# - start thinking about specific usecases now please, particularly own version!
-# ADD BARTS AND A FEW OTHER LONDON HOSPS TOO!
-# - including the averages table
-# - actually just do all london too
-# AND ACTUALLY YH USE A CACHED FUNCTION TO GET NAMES FROM THE DB INSTEAD WHILE WE ARE TESTING 100%!
-# DO POSTCODES
-# PUT ON CLOUD!
-# ADD THE OTHER AVERAGE TO THE DB TOO!
-# ADD THE CHATBOT
-# CLASS BASED AND DESIGN PATTERNS x DATA STRUCTURES
-
-
-
-# DO THE REGION STUFF AS A FUNCTION AND CACHE IT
-# - SO SELECT A HOSPITAL WHERE THEY MATCH FROM THE MISC VAR 
-# - THEN REMOVE THIS >>>>>>> webapi.get_db_accurate_hospital_names()    
-# - THEN DEFO HAVE SOMETHING BEING PULLED FROM MY DB
-# - THEN ACTUALLY CONTINUE TO THE WHOLE AVERAGES THING CICD
-#   - legit do think exactly what do i want tho
-#   - and then start mixing it in with gpt too (as per below and the full functionality thats what I mean, just basic no long ting)
-
-# THEN ADD IN THE FULL BASIC FUNCTIONALITY HERE
-# THEN START DOING POSTCODE AND MAP STUFF! (legit do this early as else it can get too complicated duh!)
-
-# PUT THIS ON ST.CLOUD
-# PUT V1.01 ON ST.CLOUD OF OTHER PROJECT TING
+# CRIT / OTHER / OLD
+# - ABILITY TO GO BACK IN TIME WITH WHOLE DATE PASSING THING TO WEB_API FUNCTIONS PLEASE, DO THIS BY HAVING A CAL IN SIDEBAR!
+# - DATACLASSES AND CLASS BASED STRUCTURE! (and data structures x design patterns)
+# - CHATBOT STUFF
