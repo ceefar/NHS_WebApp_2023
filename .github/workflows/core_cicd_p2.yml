@@ -8,7 +8,7 @@ name: get_fresh_nhs_data_p2
 on:
   schedule:
     - cron: "0 */7 * * *" # and every 6 hours
-     - cron: "30 03 * * *" # run every day at 3:30am      
+    - cron: "30 03 * * *" # run every day at 3:30am      
     # - cron: '*/20 * * * *' # run every 20 minutes while testing
     # - cron: "01 01 * * *" # and run every day at 1:01am
   pull_request:
