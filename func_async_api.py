@@ -313,10 +313,14 @@ def create_base_first_apt_tables():
     table_queries = [first_apt_table_query, avg_wait_table_query, averages_table_mids_query, averages_table_london_query, averages_table_swest_query, averages_table_ney_query, averages_table_nwest_query, averages_table_seast_query, averages_table_east_query]
     [db.secure_add_to_db(table_query) for table_query in table_queries] 
 
-def run_averages_stored_procedure():
+def run_averages_stored_procedure(extension=False):
     # -- check if table has data for the current day
     today = datetime.date.today()
-    regions = ["mids", "london", "swest", "ney"]
+    if not extension:
+        regions = ["mids", "london", "swest", "ney"]
+    else:
+        regions = ["seast", "nwest", "east"]
+    # -- 
     for region in regions:
         query = f"SELECT COUNT(*) FROM daily_department_averages_{region} WHERE date = '{today}';"
         result = db.secure_get_from_db(query)
