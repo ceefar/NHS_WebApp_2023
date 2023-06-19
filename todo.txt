@@ -1,10 +1,25 @@
+[ day 3 - 19/06 ]
+
+[ done ]
+- added seast, nwest, & east to api pipeline
+- added seast, nwest, & east stored procedures
+- added seast, nwest, & east table creation func to async_api script
+- added cicd pipeline for p2 backend
+- make a reqs for the cicd only and ensure you use it for github actions instead of the classic reqs
 
 [ todo ]
-- complete backend
-    - mids, swest, london, ney, seast, nwest, east
-    - remember stored procedures too duh
-    - remembering that daily_department_averages are first_apt and maybe adding the same for treatment_avg_wait 
-- ability to choose date for data, ability to auto select last valid day if no data for current day is found
-- unit tests for db cnx stuff using chatgpt
+- ensure that web app works and add in all data stuff so working
+    - overhaul the ui but dont faff
+    - add in unit tests for db cnx stuff using chatgpt
+    - ability to choose date for data, ability to auto select last valid day if no data for current day is found
 - get app working on cloud
-- make a reqs for the cicd only and ensure you use it for github actions instead of the classic reqs
+- quickly do the chatbot
+- to fully complete backend [mids, swest, london, ney, seast, nwest, east]
+    - remembering that daily_department_averages are first_apt and maybe adding the same for treatment_avg_wait 
+- do super quick readme, add cicd buttons, add link to web app?, add screens?
+- quickly do postcodes x map (nah forget this for now dawg, save for actual portfolio project not just personal one)
+
+[ and then ]
+- do this new infinite runner game idea
+- and THEN it will be back into wito project (you can keep doing the game as a side project duh)
+

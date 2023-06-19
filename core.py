@@ -60,15 +60,17 @@ if __name__ == "__main__":
     start_time = time.time()
     # create_base_first_apt_tables()
 
-    # -- run cicd pipeline for part 1 or part 2 (different region groupings) -- 
-    task_type = os.environ['TASK_TYPE']
+    # -- run cicd pipeline for part 1 or part 2 (different region groupings), use default parameter to run parts manually -- 
+    task_type = os.environ.get('TASK_TYPE', default='part2')
+    print(f"\n- - - - - - - - - -\n[ Loaded Env Var : TASK_TYPE = {task_type} ]\n- - - - - - - - - -")
+
     if task_type == "part1":
         asyncio.run(main()) 
         run_averages_stored_procedure()
     # -- seast, nwest, east --
     elif task_type == "part2":
         asyncio.run(main_extension()) 
-        run_averages_stored_procedure(extension=True)
+        run_averages_stored_procedure(is_part_2=True)
     
     # -- log timing --
     end_time = time.time()
