@@ -58,7 +58,7 @@ def get_hospital_names_for_region(region): # note isnt an api function was just 
     return regions_hospital_names_list
 
 
-# -- MOVE DIS TO SOME NEW ST MISC MODULE? (or just the misc module tbf) --
+# -- TO MOVE TO SOME NEW ST MODULE (or just the misc module tbf?) --
 def custom_div(hex_colour=NHSColors.NHS_Dark_Green, thickness=2):
     r_for_a, g_for_a, b_for_a = hex_to_rgb(hex_colour)
     divider_style = f"border-bottom: {thickness}px dashed rgba({r_for_a}, {g_for_a}, {b_for_a}, 0.3); margin-top: 20px;"
@@ -74,17 +74,50 @@ def custom_title(title, subtitle, want_div=False):
         # -- convert the given colour to rgb so we can set its alpha --
         custom_div()
 
+def display_selected_trust_wait_times_overview(trust_first_apt_wait_time_from_db_name, trust_first_apt_wait_time_from_db_wait_time, trust_avg_wait_time_from_db_wait_time):
+    """ should add basic info as well from datasets/hospitals.csv """
+    custom_title("Your Selected Trust", f"{trust_first_apt_wait_time_from_db_name}")
+    top_col_1, top_col_2 = st.columns(2)
+    with top_col_1:
+        st.metric(label="First Appointment Avg Wait", value=f"{trust_first_apt_wait_time_from_db_wait_time} weeks")
+    with top_col_2:
+        st.metric(label="Treatment Avg Wait", value=f"{trust_avg_wait_time_from_db_wait_time} weeks")
+    st.divider()
 
-# -- 
+def display_min_max_wait_times_for_region(user_region_entry, min_max_for_dept_x_region, trust_first_apt_wait_time_from_db_wait_time, trust_first_apt_wait_time_from_db_name):
+    """ """
+    custom_title("Min Max Wait Times", f"For {user_region_entry} Region")
+    st.write("")
+    subheader_style = f"font-size: 0.9rem; margin-top: -10px; margin-bottom: 0px; color: {NHSColors.NHS_Purple}; letter-spacing: 1px"
+    minmax_col_1, minmax_col_2, minmax_col_3 = st.columns(3)
+    min_wait_name, min_wait_time, max_wait_name, max_wait_time = min_max_for_dept_x_region[0]
+    with minmax_col_1:
+        st.markdown(f"<p style='{subheader_style}'><b>Fastest NHS Trust In The Region</b></p>", unsafe_allow_html=True)
+        st.metric(label=min_wait_name, value=min_wait_time, delta=trust_first_apt_wait_time_from_db_wait_time - min_wait_time)
+        st.write("###")
+    with minmax_col_2:
+        st.markdown(f"<p style='{subheader_style}'><b>Slowest NHS Trust In The Region</b></p>", unsafe_allow_html=True)
+        st.metric(label=max_wait_name, value=max_wait_time, delta=trust_first_apt_wait_time_from_db_wait_time - max_wait_time)
+        st.write("###")
+    with minmax_col_3:
+        st.markdown(f"<p style='{subheader_style}'><b>Your Selected NHS Trust</b></p>", unsafe_allow_html=True)
+        st.metric(label=trust_first_apt_wait_time_from_db_name, value=trust_first_apt_wait_time_from_db_wait_time)
+        st.write("###")
+    st.divider()
+
+
+# -- main --
 def main():
-    # --
+    # -- title --
     custom_title(title="NHS Web App", subtitle="Do Stuff!", want_div=True)
-    # --
+    # -- sidebar --
     with st.sidebar:
         app_mode = st.radio(label="Select a Mode", options=["Manual", "NHS GPT"])
 
-    # -- abstract the below stuff into own funcs plis btw --
+    # -- app mode : manual --
     if app_mode == "Manual":
+
+        # -- NOTE : properly abstract all this stuff and bang it in functs/modules when the logic is finalised
 
         # -- top input section --
         st.markdown("##### Search For Wait Time Info")
@@ -100,60 +133,20 @@ def main():
 
         # -- make api calls to get selected data --
         trust_first_apt_wait_time_from_db_name, trust_first_apt_wait_time_from_db_wait_time = get_trust_curr_first_apt_for_a_department(user_department_entry, user_trust_entry)
-        _ , trust_avg_wait_time_from_db_wait_time = get_trust_curr_avg_wait_time_for_a_department(user_department_entry, user_trust_entry) # trust_avg_wait_time_from_db_name
+        trust_avg_wait_time_from_db_name , trust_avg_wait_time_from_db_wait_time = get_trust_curr_avg_wait_time_for_a_department(user_department_entry, user_trust_entry) 
         min_max_for_dept_x_region = webapi.get_min_max_first_apt_wait_for_department_and_region(user_department_entry, user_region_shortcode)
 
-
-        # -- NOTE : properly abstract this and bang it in functs/modules when the logic is finalised
-
-
-        # -- display segment 1 : overview --
-        custom_title("Your Selected Hospital", f"{trust_first_apt_wait_time_from_db_name}")
-        top_col_1, top_col_2 = st.columns(2)
-        with top_col_1:
-            st.metric(label="First Appointment Avg Wait", value=f"{trust_first_apt_wait_time_from_db_wait_time} weeks")
-        with top_col_2:
-            st.metric(label="Treatment Avg Wait", value=f"{trust_avg_wait_time_from_db_wait_time} weeks")
-        st.divider()
+        tab_1, tab_2, tab_3 = st.tabs(["Selected Trust", "Region Min/Max", "Country Min/Max"])
+        with tab_1:
+            display_selected_trust_wait_times_overview(trust_first_apt_wait_time_from_db_name, trust_first_apt_wait_time_from_db_wait_time, trust_avg_wait_time_from_db_wait_time)
+        with tab_2:
+            display_min_max_wait_times_for_region(user_region_entry, min_max_for_dept_x_region, trust_first_apt_wait_time_from_db_wait_time, trust_first_apt_wait_time_from_db_name)
 
 
+        # -- CONTINUE HERE --
 
-        # FASTEST SLOWEST COUNTRYWIDE, && REGIONAL, && RANKED (FOR BOTH OOO), && AVERAGES FOR REGIONS -> ALL AS TABS
-        # - QUICKLY THINK ABOUT EXACTLY HOW YOU WANT TO USE THIS!
-        #   - defo starting with fastest in the country and fastest in the region and your comparison (also some text based rank would be good here, this is basically just overview tab)
-        #   - defo do a ranking tab
-        # BANG YOUR SELECTED THING ABOVE IN THE TABS TOO DUHHHHHH
-
-        # QUICKLY UPDATE COLOUR SO SUBTITLE "SEARCH FOR WAIT TIME" && CHANGE DO STUFF TO SAY SOMETHING LEGIT FFS EVEN IF TRASH ITS JUST A DRAFT U CLOWN 
-        # CHOOSE DATE THING IN SIDEBAR
-        # - with unit tests so do that with this basically
-        # UNIT TESTS & BASIC ERROR HANDLING
-        # - see north west general surgery (this kinda stuff may also be resolved by date change or even just names issue, tho this specifically is Alder Hey Children'S thats causing the problem)
-        # GPT INTEGRATION HELLA QUICK
-
-        # MAKE IT LIVE!
-        # - CHANGE THE CRON TO BE SCHEDULED, HAVE IT SCHEDULDED AT LIKE 1/2 THEN LIKE 3/4 ALSO JUST INCASE
-        # - ENSURE WE DONT HAVE THE CNX ISSUE, WHICH REMEMBER IS LIKE IF IT ERRORS THEN THE CNX NEEDS TO BE RESET TING (also singleton tho?)
-
-        # THEN EITHER WITO PROJECT OR QUICKLY SIDE PROJECT ON GAME FOR A FEW DAYS (latter preferably as still rusty and wanna be fresh af so i dont waste time due to bad coding)
 
         # --
-        st.markdown("##### Regional Min Max Snapshot [First Appointment Wait Times]")
-        min_wait_col_1, max_wait_col_2, selected_wait_col_3 = st.columns(3)
-        min_wait_name, min_wait_time, max_wait_name, max_wait_time = min_max_for_dept_x_region[0]
-        with min_wait_col_1:
-            st.write(f"Fastest NHS Trust In The Region [ {user_region_entry} ]")
-            st.metric(label=min_wait_name, value=min_wait_time, delta=trust_first_apt_wait_time_from_db_wait_time - min_wait_time)
-        with max_wait_col_2:
-            st.write(f"Slowest NHS Trust In The Region [ {user_region_entry} ]")
-            st.metric(label=max_wait_name, value=max_wait_time, delta=trust_first_apt_wait_time_from_db_wait_time - max_wait_time)
-        with selected_wait_col_3:
-            st.write(f"Your Selected NHS Trust [ {user_region_entry} ]")
-            st.metric(label=trust_first_apt_wait_time_from_db_name, value=trust_first_apt_wait_time_from_db_wait_time)
-        st.divider()
-        
-
-        # -- REMEMBER NEED TO MAKE THEM FUNCS HERE AND CACHE DEM --
         london_avg = get_london_daily_avg_first_apt(user_department_entry)
         mids_avg = get_mids_daily_avg_first_apt(user_department_entry)
         st.metric(label="ALL LONDON Avg Wait", value=f"{float(london_avg):.1f}")
@@ -166,7 +159,7 @@ def main():
         st.write(rv)
 
         
-
+    # -- app mode : chatbot --
     elif app_mode == "NHS GPT":
         st.markdown("##### NHS GPT")
         user_chat_entry = st.text_input(label="What wait time information would you like to know?", value="What are the wait times for Neurology at Barts NHS Trust?", help="E.g. What are the wait times for `DEPARTMENT` at `NHS TRUST`")
@@ -175,3 +168,29 @@ def main():
 if __name__ == "__main__":
     main()
 
+
+
+# [ FINAL TOD0! ]
+# -------------
+# LAST REMAINING TABS TO ADD
+# - min max for country
+# - list for region ranked with urs highlighted
+# - averages for regions 
+# - rank of urs in country and any other random additional info
+
+# CHOOSE DATE THING IN SIDEBAR
+# - with unit tests so do that with this basically
+# UNIT TESTS & BASIC ERROR HANDLING
+# - see north west general surgery (this kinda stuff may also be resolved by date change or even just names issue, tho this specifically is Alder Hey Children'S thats causing the problem)
+# GPT INTEGRATION HELLA QUICK
+
+# QUICKLY UPDATE COLOUR SO SUBTITLE "SEARCH FOR WAIT TIME" && CHANGE DO STUFF TO SAY SOMETHING LEGIT FFS EVEN IF TRASH ITS JUST A DRAFT U CLOWN 
+# ITS CHEEKY AND NOT EVEN PORTFOLIO READY PROJECT BUT TAKE THE CUSTOM HTML AND CSS AND PUT IT IN ITS OWN FILE 
+# OMG DO THE GPT GLOBAL STYLES THING OR ATLEAST CHECK IF THIS WORKS
+# ALSO A BG IMG LIKE LINED PAPER WOULD BE NICE BUT TBF DW LMAO
+
+# MAKE IT LIVE!
+# - CHANGE THE CRON TO BE SCHEDULED, HAVE IT SCHEDULDED AT LIKE 1/2 THEN LIKE 3/4 ALSO JUST INCASE
+# - ENSURE WE DONT HAVE THE CNX ISSUE, WHICH REMEMBER IS LIKE IF IT ERRORS THEN THE CNX NEEDS TO BE RESET TING (also singleton tho?)
+
+# THEN EITHER WITO PROJECT OR QUICKLY SIDE PROJECT ON GAME FOR A FEW DAYS (latter preferably as still rusty and wanna be fresh af so i dont waste time due to bad coding)

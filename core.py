@@ -1,5 +1,6 @@
 # -- author : ceefar --
 # -- project : nhs etl 2023 --
+# -- file : runs two different cicd pipelines to grab data from my planned care api, clean it, and transfer it into my own hosted mysql db each day for all trusts in the uk --
 
 # -- imports --
 import time
