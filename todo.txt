@@ -1,0 +1,9 @@
+
+[ todo ]
+- complete backend
+    - mids, swest, london, ney, seast, nwest, east
+    - remembering that daily_department_averages are first_apt and maybe adding the same for treatment_avg_wait 
+- ability to choose date for data, ability to auto select last valid day if no data for current day is found
+- unit tests for db cnx stuff using chatgpt
+- get app working on cloud
+- make a reqs for the cicd only and ensure you use it for github actions instead of the classic reqs
