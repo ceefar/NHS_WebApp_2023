@@ -68,5 +68,6 @@ def get_db_accurate_hospital_names():
 if __name__ == "__main__":
     check_pulse()
 
+
 # add this to notes, query for getting all hosp codes from a region from old db
 # "SELECT hospital_code FROM nhs_hosp_codes WHERE hospital_name IN (SELECT hospital_name FROM first_apt WHERE hospital_region = 'swest');"
