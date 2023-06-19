@@ -39,6 +39,6 @@ jobs:
             mysql_port: ${{ secrets.MYSQL_PORT }} 
             mysql_user: ${{ secrets.MYSQL_USER }} 
         run: |
-        export TASK_TYPE="part1"
-        run: python core.py
+          export TASK_TYPE="part1"
+          run: python core.py
 #
