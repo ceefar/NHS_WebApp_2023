@@ -31,7 +31,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements_cicd.txt
-      - name: connect to db & run cicd script for p1 data # run cicd pipeline script, grabs p1 data from mpc api to my db
+      - name: connect to db & run cicd script for p2 data # run cicd pipeline script, grabs p1 data from mpc api to my db
         env: 
             mysql_db: ${{ secrets.MYSQL_DB }}
             mysql_host: ${{ secrets.MYSQL_HOST }}
@@ -39,6 +39,6 @@ jobs:
             mysql_port: ${{ secrets.MYSQL_PORT }} 
             mysql_user: ${{ secrets.MYSQL_USER }} 
         run: |
-          export TASK_TYPE="part1"
+          export TASK_TYPE="part2"
           python core.py
 #
