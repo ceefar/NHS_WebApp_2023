@@ -12,7 +12,7 @@ from streamlit_folium import folium_static
 from dotenv import load_dotenv
 # -- internal imports --
 import func_web_api as webapi
-from func_misc import Misc, get_cleaned_dept
+from func_misc import Misc, NHSColors, get_cleaned_dept, hex_to_rgb
 
 
 # -- streamlit setup --
@@ -58,18 +58,27 @@ def get_hospital_names_for_region(region): # note isnt an api function was just 
     return regions_hospital_names_list
 
 
-# -- TEMP AF --
-def display_temp_faux_map():
-    initial_location = [50.389484405517578, -3.9596600532531738]
-    folium_map = folium.Map(location=initial_location, zoom_start=12)
-    folium.Marker(location=initial_location, popup="Your Location").add_to(folium_map)
-    folium_static(folium_map, width=400, height=400) # doesnt properly resize oof
+# -- MOVE DIS TO SOME NEW ST MISC MODULE? (or just the misc module tbf) --
+def custom_div(hex_colour=NHSColors.NHS_Dark_Green, thickness=2):
+    r_for_a, g_for_a, b_for_a = hex_to_rgb(hex_colour)
+    divider_style = f"border-bottom: {thickness}px dashed rgba({r_for_a}, {g_for_a}, {b_for_a}, 0.3); margin-top: 20px;"
+    st.markdown(f"<hr style='{divider_style}'>", unsafe_allow_html=True)
+
+def custom_title(title, subtitle, want_div=False):
+    """ custom CSS style for the title and subtitle to fix excessive padding in st """
+    title_style = f"font-size: 1.8rem; margin-bottom: -20px; color: {NHSColors.NHS_Light_Blue};"
+    subtitle_style = f"font-size: 0.9rem; margin-top: -10px; margin-bottom: {0 if want_div else 20}px; color: {NHSColors.NHS_Dark_Green}; letter-spacing: 1px"
+    st.markdown(f"<h1 style='{title_style}'>{title}</h1>", unsafe_allow_html=True)
+    st.markdown(f"<p style='{subtitle_style}'><b>{subtitle}</b></p>", unsafe_allow_html=True)
+    if want_div:
+        # -- convert the given colour to rgb so we can set its alpha --
+        custom_div()
+
 
 # -- 
 def main():
     # --
-    st.markdown(f"### NHS Web App")
-    st.write("###")
+    custom_title(title="NHS Web App", subtitle="Do Stuff!", want_div=True)
     # --
     with st.sidebar:
         app_mode = st.radio(label="Select a Mode", options=["Manual", "NHS GPT"])
@@ -79,7 +88,7 @@ def main():
 
         # -- top input section --
         st.markdown("##### Search For Wait Time Info")
-        top_col_1, top_col_2, top_col_3 = st.columns([1,1,1], gap="large")
+        top_col_1, top_col_2, top_col_3 = st.columns([1,1,1], gap="medium")
         with top_col_1:
             user_department_entry = st.selectbox(label="Select a Department", options=Misc.departments_list)
         with top_col_2:
@@ -87,23 +96,46 @@ def main():
             user_region_shortcode = Misc.regions_list[user_region_entry.lower()]
         with top_col_3:
             user_trust_entry = st.selectbox(label="Select an NHS Trust", options=get_hospital_names_for_region(user_region_shortcode)) # must convert the param back to lower because of this
-        st.divider()
+        custom_div()
 
-        # -- make api calls to get selected data
+        # -- make api calls to get selected data --
         trust_first_apt_wait_time_from_db_name, trust_first_apt_wait_time_from_db_wait_time = get_trust_curr_first_apt_for_a_department(user_department_entry, user_trust_entry)
-        trust_avg_wait_time_from_db_name, trust_avg_wait_time_from_db_wait_time = get_trust_curr_avg_wait_time_for_a_department(user_department_entry, user_trust_entry)
+        _ , trust_avg_wait_time_from_db_wait_time = get_trust_curr_avg_wait_time_for_a_department(user_department_entry, user_trust_entry) # trust_avg_wait_time_from_db_name
         min_max_for_dept_x_region = webapi.get_min_max_first_apt_wait_for_department_and_region(user_department_entry, user_region_shortcode)
 
-        # -- temp faux map --
 
-        st.markdown(f"#### {trust_first_apt_wait_time_from_db_name}")
-        temp_col_1, temp_col_2 = st.columns(2)
-        with temp_col_1:
-            st.metric(label="First Appointment Avg Wait", value=trust_first_apt_wait_time_from_db_wait_time)
-        with temp_col_2:
-            st.metric(label="Treatment Avg Wait", value=trust_avg_wait_time_from_db_wait_time)
+        # -- NOTE : properly abstract this and bang it in functs/modules when the logic is finalised
+
+
+        # -- display segment 1 : overview --
+        custom_title("Your Selected Hospital", f"{trust_first_apt_wait_time_from_db_name}")
+        top_col_1, top_col_2 = st.columns(2)
+        with top_col_1:
+            st.metric(label="First Appointment Avg Wait", value=f"{trust_first_apt_wait_time_from_db_wait_time} weeks")
+        with top_col_2:
+            st.metric(label="Treatment Avg Wait", value=f"{trust_avg_wait_time_from_db_wait_time} weeks")
         st.divider()
 
+
+
+        # FASTEST SLOWEST COUNTRYWIDE, && REGIONAL, && RANKED (FOR BOTH OOO), && AVERAGES FOR REGIONS -> ALL AS TABS
+        # - QUICKLY THINK ABOUT EXACTLY HOW YOU WANT TO USE THIS!
+        #   - defo starting with fastest in the country and fastest in the region and your comparison (also some text based rank would be good here, this is basically just overview tab)
+        #   - defo do a ranking tab
+        # BANG YOUR SELECTED THING ABOVE IN THE TABS TOO DUHHHHHH
+
+        # QUICKLY UPDATE COLOUR SO SUBTITLE "SEARCH FOR WAIT TIME" && CHANGE DO STUFF TO SAY SOMETHING LEGIT FFS EVEN IF TRASH ITS JUST A DRAFT U CLOWN 
+        # CHOOSE DATE THING IN SIDEBAR
+        # - with unit tests so do that with this basically
+        # UNIT TESTS & BASIC ERROR HANDLING
+        # - see north west general surgery (this kinda stuff may also be resolved by date change or even just names issue, tho this specifically is Alder Hey Children'S thats causing the problem)
+        # GPT INTEGRATION HELLA QUICK
+
+        # MAKE IT LIVE!
+        # - CHANGE THE CRON TO BE SCHEDULED, HAVE IT SCHEDULDED AT LIKE 1/2 THEN LIKE 3/4 ALSO JUST INCASE
+        # - ENSURE WE DONT HAVE THE CNX ISSUE, WHICH REMEMBER IS LIKE IF IT ERRORS THEN THE CNX NEEDS TO BE RESET TING (also singleton tho?)
+
+        # THEN EITHER WITO PROJECT OR QUICKLY SIDE PROJECT ON GAME FOR A FEW DAYS (latter preferably as still rusty and wanna be fresh af so i dont waste time due to bad coding)
 
         # --
         st.markdown("##### Regional Min Max Snapshot [First Appointment Wait Times]")
@@ -143,45 +175,3 @@ def main():
 if __name__ == "__main__":
     main()
 
-
-# SO RNRN
-# - put on cloud
-# - check out the ui on mobile
-# - do below new version thing and maybe quickly test thing too
-#   - make small mobile changes to ui while doing this
-# - continue with completing the backend  
-#   - as ui really doesnt matter and id rather just have working backend to use this myself and then do sumnt new even if that is a game
-
-# NEW VERSION
-# NEW UI TO HAVE 
-# - TABS
-# - FIRST TAB FASTEST
-#   - THIS CAN SHOW REGIONS AND COUNTRYWIDE!
-# - SECOND TAB SLOWEST
-# - THIRD TAB RANK
-
-# QUICKLY TEST
-# - ask gpt all maps in trust
-
-# UI
-# - add in this nationwide min max and quickly 
-# - all currently available regional averages
-# - this rank idea in some visualiser
-# - add back on button press
-# - overhaul the ui
-# - custom css components
-# - show hospital on map n ting
-#   - all the info on a trust, i.e. the hospitals + their details, how close to postcode, etc (use nhs csv and old code for maps stuff surely duh?)
-# - postcodes ting
-
-# BACKEND
-# - all regions
-# - all averages table
-# - all stored procedures
-# - cicd
-# - singleton the connection?
-
-# CRIT / OTHER / OLD
-# - ABILITY TO GO BACK IN TIME WITH WHOLE DATE PASSING THING TO WEB_API FUNCTIONS PLEASE, DO THIS BY HAVING A CAL IN SIDEBAR!
-# - DATACLASSES AND CLASS BASED STRUCTURE! (and data structures x design patterns)
-# - CHATBOT STUFF

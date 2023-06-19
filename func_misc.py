@@ -10,7 +10,7 @@ JSONList = list[JSON]
 # -- general globals --
 header = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"}
 
-# -- write me plis ceefar --
+# -- some misc funcs --
 def get_cleaned_dept(user_department):
     if user_department == "Ear Nose and Throat":
         return "ent" 
@@ -19,9 +19,16 @@ def get_cleaned_dept(user_department):
     else:
         return user_department
 
-# -- misc class --
+def hex_to_rgb(hex_code):
+    hex_code = hex_code.strip("#")  # Remove "#" if present
+    r = int(hex_code[0:2], 16)
+    g = int(hex_code[2:4], 16)
+    b = int(hex_code[4:6], 16)
+    return r, g, b
+
+# -- misc handy classes --
 class Misc:
-    regions_list = {"midlands":"mids", "london":"london","north east and yorkshire":"ney", "south west":"swest"}
+    regions_list = {"midlands":"mids", "london":"london","north east and yorkshire":"ney", "south west":"swest", "east":"east", "south east":"seast", "north west":"nwest"}
     hospitals_regions = {'UNIVERSITY HOSPITALS BIRMINGHAM NHS FOUNDATION TRUST':"mids", 'CHESTERFIELD ROYAL HOSPITAL NHS FOUNDATION TRUST':"mids", 
                         'KETTERING GENERAL HOSPITAL NHS FOUNDATION TRUST':"mids", 'NOTTINGHAM UNIVERSITY HOSPITALS NHS TRUST':"mids", 
                         'SHERWOOD FOREST HOSPITALS NHS FOUNDATION TRUST':"mids", 'THE DUDLEY GROUP NHS FOUNDATION TRUST':"mids", 
@@ -133,5 +140,20 @@ class Misc:
         'Rheumatology',
         'Elderly Medicine',
         'Gynaecology']
-
+    
+# @dataclass
+class NHSColors:
+    NHS_Blue: str = "#005EB8"
+    NHS_Dark_Blue: str = "#003087"
+    NHS_Light_Blue: str = "#0072CE"
+    NHS_Yellow: str = "#FFB81C"
+    NHS_Dark_Yellow: str = "#FF9900"
+    NHS_Light_Yellow: str = "#FFD400"
+    NHS_Green: str = "#00A499"
+    NHS_Dark_Green: str = "#00703C"
+    NHS_Light_Green: str = "#009A44"
+    NHS_Pink: str = "#ED008C"
+    NHS_Purple: str = "#660099"
+    NHS_Orange: str = "#FF6600"
+    NHS_Teal: str = "#009999"
 

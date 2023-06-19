@@ -6,10 +6,14 @@
 - added seast, nwest, & east table creation func to async_api script
 - added cicd pipeline for p2 backend
 - make a reqs for the cicd only and ensure you use it for github actions instead of the classic reqs
+- begun ui overhaul for mobile primarily 
+- custom css component for mobile display
+- fixed backend bugs with cicd and stored procedures
+- colours class
+
 
 [ todo ]
 - ensure that web app works and add in all data stuff so working
-    - overhaul the ui but dont faff
     - add in unit tests for db cnx stuff using chatgpt
     - ability to choose date for data, ability to auto select last valid day if no data for current day is found
 - get app working on cloud
