@@ -1,14 +1,14 @@
 # -- author : ceefar --
-# -- file : cicd pipeline yaml - gets fresh nhs data each day from the NHS My Planned Care API --
+# -- file : cicd pipeline yaml - gets fresh nhs data each day from the NHS My Planned Care API, part 2 of 2 datasets - regions : seast, nwest, and east --
 # -- project : nhs etl 2023 --
 
-name: get_fresh_nhs_data
+name: get_fresh_nhs_data_p2
 
 # -- on schedule and on open pr --
 on:
   schedule:
-    - cron: "0 */6 * * *" # and every 6 hours
-    - cron: "10 02 * * *" # run every day at 2:10am
+    - cron: "0 */7 * * *" # and every 6 hours
+     - cron: "30 03 * * *" # run every day at 3:30am      
     # - cron: '*/20 * * * *' # run every 20 minutes while testing
     # - cron: "01 01 * * *" # and run every day at 1:01am
   pull_request:
