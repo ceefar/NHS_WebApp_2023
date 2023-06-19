@@ -2,6 +2,7 @@
 [ todo ]
 - complete backend
     - mids, swest, london, ney, seast, nwest, east
+    - remember stored procedures too duh
     - remembering that daily_department_averages are first_apt and maybe adding the same for treatment_avg_wait 
 - ability to choose date for data, ability to auto select last valid day if no data for current day is found
 - unit tests for db cnx stuff using chatgpt

@@ -40,5 +40,5 @@ jobs:
             mysql_user: ${{ secrets.MYSQL_USER }} 
         run: |
           export TASK_TYPE="part1"
-          run: python core.py
+          python core.py
 #
