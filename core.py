@@ -78,35 +78,3 @@ if __name__ == "__main__":
     print(f"\n- - - - - - - - - -\n[ COMPLETE ]\n - Completed In {elapsed_time}s\n- - - - - - - - - -\n")
 
 
-
-# TOD0!
-# -----
-# DISPLAY SWEST AND NEY AVGS IN PROPER METRIC COL DISPLAY
-# NEW CACHED API CODE FOR FASTEST AND SLOWEST IN THE COUNTRY TING TOO (USING SQL OBVS)
-# POSTCODE AND MAPS STUFF
-# CHOOSE BY DAY
-# DEL ALL DATA AND SEE IF CICD STILL WORKS
-# ON CLOUD
-
-
-
-# ADD NEW HOSPS
-# GET WEBAPP ON CLOUD WITH NEW GPT CONCEPT
-# START DOING NEW DB TABLE CICD AND HOOKING THAT UP TO THE WEB APP TOO (AND GPT FUNCTIONS TOO OOOOOOOOO)
-
-
-# N0TE
-# - class based, data structures, design patterns, think about this stuff during / for a first refactor (tho dont take donkeys on this project tho)
-
-# RNRN
-# - GET THIS WORKING ON CICD - TO TEST JUST EDIT ENTRIES TO BE FROM YESTERDAY
-# - get to the whole collating daily averages thing after
-#   - as per below ensure this is designed with the web app in mind
-# - get some basic web app back up but instead of their api use my own db nice!
-# - then get some basic web app up to start legit just put in your postcode and get a list of trusts, then start doing the whole map thing with this and expand from there
-
-# TO CONFIRM
-# - MAKE SURE IT SKIPS OVER IF THERE ARE STILL VALID
-
-# GET GPT TO...
-# - AS PER EXISTING PRINTS, CONVERT TO LOGS, ENSURE THEY ARE GIVING MORE ACCURATE INFO i.e. the hosp name duh
