@@ -1,6 +1,4 @@
-[ day 3 - 19/06 ]
-
-[ done ]
+[ done : 19/06 ]
 - added seast, nwest, & east to api pipeline
 - added seast, nwest, & east stored procedures
 - added seast, nwest, & east table creation func to async_api script
@@ -10,20 +8,13 @@
 - custom css component for mobile display
 - fixed backend bugs with cicd and stored procedures
 - colours class
+- new tabs ui 
+- min max for country
 
+[ done : 20/06 ]
+- abstracted out more web_api calls to cached functions as guna implement some unit tests shortly
+- exapnding averages, adding in cached calls, updating backend functionality to including using date to change averages info (only avgs for now)
 
 [ todo ]
-- ensure that web app works and add in all data stuff so working
-    - add in unit tests for db cnx stuff using chatgpt
-    - ability to choose date for data, ability to auto select last valid day if no data for current day is found
-- get app working on cloud
-- quickly do the chatbot
-- to fully complete backend [mids, swest, london, ney, seast, nwest, east]
-    - remembering that daily_department_averages are first_apt and maybe adding the same for treatment_avg_wait 
-- do super quick readme, add cicd buttons, add link to web app?, add screens?
-- quickly do postcodes x map (nah forget this for now dawg, save for actual portfolio project not just personal one)
-
-[ and then ]
-- do this new infinite runner game idea
-- and THEN it will be back into wito project (you can keep doing the game as a side project duh)
-
+- see web_app.py but basically nearly done just last few remaining things will need a day or 2
+    - then once this is done will start returning to wito project full time, tho maybe just part time to start 

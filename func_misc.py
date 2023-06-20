@@ -1,6 +1,8 @@
 # -- author : ceefar --
 # -- project : nhs etl 2023 --
 
+# -- imports --
+import streamlit as st
 
 # -- some handy objects --
 JSON = int | str | float | bool | None | dict [str, "JSON"] | list["JSON"]
@@ -11,6 +13,10 @@ JSONList = list[JSON]
 header = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"}
 
 # -- some misc funcs --
+def st_page_load():
+    """ self referencing af """
+    st.set_page_config(layout="wide")
+
 def get_cleaned_dept(user_department):
     if user_department == "Ear Nose and Throat":
         return "ent" 
