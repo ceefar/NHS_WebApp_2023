@@ -1,3 +1,4 @@
 secrets.txt
 .env
 gpt_tests
+secrets.toml

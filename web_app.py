@@ -8,6 +8,7 @@ import streamlit as st
 import os
 import openai
 import folium
+import datetime
 from streamlit_folium import folium_static
 from dotenv import load_dotenv
 # -- internal imports --
@@ -153,6 +154,25 @@ def display_min_max_wait_times_countrywide(user_department_entry, trust_first_ap
         st.metric(label=f"{trust_waits_info_tuple[0]} {trust_waits_info_tuple[1]}", value=trust_waits_info_tuple[2], delta=delta)
         st.write("###")
 
+def display_regional_averages(user_department_entry, user_date_entry):
+    st.write("###")
+    region_avg_col_1, region_avg_col_2, region_avg_col_3, region_avg_col_4, region_avg_col_5, region_avg_col_6 = st.columns(spec=6, gap="medium")
+    # -- region avgs, first apt, now date can update, note that this is currently the only thing date will update tho --
+    swest_daily_avg_first_apt_wait = get_swest_daily_avg_first_apt(user_department_entry, user_date_entry)
+    ney_daily_avg_first_apt_wait = get_ney_daily_avg_first_apt(user_department_entry, user_date_entry)
+    london_avg = get_london_daily_avg_first_apt(user_department_entry, user_date_entry)
+    mids_avg = get_mids_daily_avg_first_apt(user_department_entry, user_date_entry)
+    # -- yes obvs need to do the proper ui here with columns -- 
+    # -- and with this whole thing abstracted into its own function too, if refactoring make this stuff class based 100% --
+    with region_avg_col_1:
+        st.metric(label="ALL LONDON Avg Wait", value=f"{float(london_avg):.1f}")
+    with region_avg_col_2:
+        st.metric(label="ALL MIDLANDS Avg Wait", value=f"{float(mids_avg):.1f}")
+    with region_avg_col_3:
+        st.metric(label="ALL SWEST Avg Wait", value=f"{float(swest_daily_avg_first_apt_wait):.1f}")
+    with region_avg_col_4:
+        st.metric(label="ALL NEY Avg Wait", value=f"{float(ney_daily_avg_first_apt_wait):.1f}")
+    st.divider()
 
 
 # -- main --
@@ -183,6 +203,7 @@ def main():
         # -- additional test functionality for date in sidebar, is at the bottom due to control flow but can fix this by abstracting everything properly when completed --
         with st.sidebar:
             custom_div(NHSColors.NHS_Dark_Blue)
+            first_valid_date = date = datetime.datetime(2023, 6, 13) # do this with an api call but this will be fine for now
             user_date_entry = st.date_input(label="Enter Date - NOT IMPLEMENTED PROPERLY YET!")
 
         # -- make api calls to get selected data --
@@ -191,41 +212,29 @@ def main():
         min_max_for_dept_x_region = get_min_max_first_apt_wait_for_department_and_region(user_department_entry, user_region_shortcode)
 
         # -- main display for data returned from db which is pulled from nhs mpc api daily via cicd pipeline --
-        tab_1, tab_2, tab_3, tab_4, tab_5 = st.tabs(["Your Trust Info", "Region Min/Max", "Country Min/Max", "Regional Averages", "Incoming"])
+        tab_1, tab_2, tab_3, tab_4, tab_5 = st.tabs(["Your Trust Info", "Region Min/Max", "Country Min/Max", "Regional Averages", "Rank Snapshot"])
         with tab_1:
             display_selected_trust_wait_times_overview(trust_first_apt_wait_time_from_db_name, trust_first_apt_wait_time_from_db_wait_time, trust_avg_wait_time_from_db_wait_time)
         with tab_2:
             display_min_max_wait_times_for_region(user_region_entry, min_max_for_dept_x_region, trust_first_apt_wait_time_from_db_wait_time, trust_first_apt_wait_time_from_db_name)
         with tab_3:
             display_min_max_wait_times_countrywide(user_department_entry, trust_first_apt_wait_time_from_db_wait_time)
-
         with tab_4:
-            def display_regional_averages(user_department_entry, user_date_entry):
-                st.write("###")
-                region_avg_col_1, region_avg_col_2, region_avg_col_3, region_avg_col_4, region_avg_col_5, region_avg_col_6 = st.columns(spec=6, gap="medium")
-                # -- region avgs, first apt, now date can update, note that this is currently the only thing date will update tho --
-                swest_daily_avg_first_apt_wait = get_swest_daily_avg_first_apt(user_department_entry, user_date_entry)
-                ney_daily_avg_first_apt_wait = get_ney_daily_avg_first_apt(user_department_entry, user_date_entry)
-                london_avg = get_london_daily_avg_first_apt(user_department_entry, user_date_entry)
-                mids_avg = get_mids_daily_avg_first_apt(user_department_entry, user_date_entry)
-                # -- yes obvs need to do the proper ui here with columns -- 
-                # -- and with this whole thing abstracted into its own function too, if refactoring make this stuff class based 100% --
-                with region_avg_col_1:
-                    st.metric(label="ALL LONDON Avg Wait", value=f"{float(london_avg):.1f}")
-                with region_avg_col_2:
-                    st.metric(label="ALL MIDLANDS Avg Wait", value=f"{float(mids_avg):.1f}")
-                with region_avg_col_3:
-                    st.metric(label="ALL SWEST Avg Wait", value=f"{float(swest_daily_avg_first_apt_wait):.1f}")
-                with region_avg_col_4:
-                    st.metric(label="ALL NEY Avg Wait", value=f"{float(ney_daily_avg_first_apt_wait):.1f}")
-                st.divider()
             display_regional_averages(user_department_entry, user_date_entry)
         
         with tab_5:
             # N0TE : USING DATE HERE BUT REMEMBER THATS NOT FULLY IMPLEMENTED YET, THO LEAVING AS ITS WORTH DOING THE ERROR HANDLING AS IT ARISES!
             display_hospitals(user_trust_entry, user_department_entry, user_date_entry) 
 
-        
+
+            # CONTINUE FROM HERE - GET THE RETURN AND DO DISPLAY SEPERATELY, THEN ABSTRACT IT OUT PROPERLY AGAIN AND MOVE THE ABOVE N0TE ABOUT DATE INTO THERE TOO
+
+            # basically to do from here is...
+            # finish this regional averages bit,
+            # then do cloud, date, chatbot, unit tests, and owt else that may be notable / pressing 
+            # then new challenger thing initial project just fuck about as need to get back to grips with ocr and comp vision again huh
+
+
     # -- app mode : chatbot --
     elif app_mode == "NHS GPT":
         st.markdown("##### NHS GPT")
