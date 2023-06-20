@@ -228,19 +228,35 @@ def main():
         with tab_4:
             display_regional_averages(user_department_entry, user_date_entry)
 
-
         def display_hospital_data(hospital_name, wait_time, ranking):
             st.markdown(
                 f"""
-                <div style="display: flex; align-items: center; margin-bottom: 10px; background-color: #f2f2f2; border: 1px solid #ddd; border-radius: 5px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);">
-                    <h2 style="flex: 0 0 60px; margin-right: 10px; background-color: #6c757d; color: #fff; text-align: center; padding: 5px; border-top-left-radius: 5px; border-bottom-left-radius: 5px;">#{int(ranking)}</h2>
+                <div style="display: flex; align-items: stretch; margin-bottom: 10px; background-color: #f2f2f2; border: 1px solid #ddd; border-radius: 5px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);">
+                    <div style="display: flex; align-items: center; justify-content: center; flex: 0 0 60px; margin-right: 10px; background-color: #6c757d; color: #fff; text-align: center; padding: 5px; border-top-left-radius: 5px; border-bottom-left-radius: 5px; height: 100%;">
+                        <h2 style="margin: 0;">#{int(ranking)}</h2>
+                    </div>
                     <div style="flex-grow: 1; padding: 10px;">
                         <h4 style="font-weight: bold; margin-bottom: -15px;">{hospital_name}</h4>
                         <p style="color: #666;">Wait Time: {wait_time}</p>
                     </div>
-                    <h3 style="flex: 0 0 60px; text-align: right; background-color: #6c757d; color: #fff; padding: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px;">{wait_time} weeks</h3>
+                    <div style="display: flex; align-items: center; justify-content: center; flex: 0 0 60px; text-align: right; background-color: #6c757d; color: #fff; padding: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; height: 100%;">
+                        <h3 style="margin: 0;">{wait_time} weeks</h3>
+                    </div>
                 </div>
                 """, unsafe_allow_html=True)
+
+        # def display_hospital_data(hospital_name, wait_time, ranking):
+        #     st.markdown(
+        #         f"""
+        #         <div style="display: flex; align-items: center; margin-bottom: 10px; background-color: #f2f2f2; border: 1px solid #ddd; border-radius: 5px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);">
+        #             <h2 style="flex: 0 0 60px; margin-right: 10px; background-color: #6c757d; color: #fff; text-align: center; padding: 5px; border-top-left-radius: 5px; border-bottom-left-radius: 5px;">#{int(ranking)}</h2>
+        #             <div style="flex-grow: 1; padding: 10px;">
+        #                 <h4 style="font-weight: bold; margin-bottom: -15px;">{hospital_name}</h4>
+        #                 <p style="color: #666;">Wait Time: {wait_time}</p>
+        #             </div>
+        #             <h3 style="flex: 0 0 60px; text-align: right; background-color: #6c757d; color: #fff; padding: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px;">{wait_time} weeks</h3>
+        #         </div>
+        #         """, unsafe_allow_html=True)
 
         # def display_hospital_data(hospital_name, wait_time, ranking):
         #     st.markdown(
