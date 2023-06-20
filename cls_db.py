@@ -7,15 +7,24 @@ import os
 from dotenv import load_dotenv
 import mysql.connector
 from mysql.connector import Error
+import streamlit as st
 
 # -- initial db cnx setup - load db vars from .env -- 
 # bruh wtf
-load_dotenv()
+# load_dotenv()
 host = os.environ.get("mysql_host")
 user = os.environ.get("mysql_user")
 password = os.environ.get("mysql_password")
 database = os.environ.get("mysql_db")
 port = 3306
+
+print(f"DEBUG AF : {host = }")
+if not host:
+    host = st.secrets["MYSQL_HOST"]
+    user = st.secrets["MYSQL_USER"]
+    password = st.secrets["MYSQL_PASSWORD"]
+    database = st.secrets["MYSQL_DB"]
+    port = 3306
 
 # --
 def check_load_from_env():
@@ -52,6 +61,7 @@ class Database:
         //params : _self 
         //returns : the connection object
         """
+        cnx = mysql.connector.connect(host=host, database=database, user=user, password=password, port=port) # charset='utf8',
         cnx = mysql.connector.connect(host=host, database=database, user=user, password=password, port=port) # charset='utf8',
         return(cnx)
 
