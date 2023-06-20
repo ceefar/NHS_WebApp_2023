@@ -98,9 +98,11 @@ def get_db_accurate_hospital_names():
     res = db.secure_get_from_db(query, None)
     return res
 
+def rank_hospitals(department, date):
+    ranked_data = db.rank_hospitals(department, date)
+    return ranked_data
+
 
 # -- driver --
 if __name__ == "__main__":
     check_pulse()
-
-
