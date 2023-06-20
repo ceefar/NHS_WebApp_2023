@@ -223,8 +223,6 @@ def main():
     # -- app mode : manual --
     if app_mode == "Manual":
 
-        # -- NOTE : properly abstract all this stuff and bang it in functs/modules when the logic is finalised
-
         # -- top input section --
         st.markdown("##### Search For Wait Time Info")
         top_col_1, top_col_2, top_col_3 = st.columns([1,1,1], gap="medium")
@@ -262,9 +260,6 @@ def main():
             display_ranked_snapshot(user_trust_entry, user_department_entry, user_date_entry)
             
 
-
-        # CONTINUE FROM HERE - GET THE RETURN AND DO DISPLAY SEPERATELY, THEN ABSTRACT IT OUT PROPERLY AGAIN AND MOVE THE ABOVE N0TE ABOUT DATE INTO THERE TOO
-
         # basically to do from here is...
         # quickly update the colours for this so that if they're over 50 then theyre red or sumnt like dat (could be over x weeks but meh)
         # finish this regional averages bit,
@@ -272,13 +267,10 @@ def main():
         # then new challenger thing initial project just fuck about as need to get back to grips with ocr and comp vision again huh
 
 
-
     # -- app mode : chatbot --
     elif app_mode == "NHS GPT":
         st.markdown("##### NHS GPT")
         user_chat_entry = st.text_input(label="What wait time information would you like to know?", value="What are the wait times for Neurology at Barts NHS Trust?", help="E.g. What are the wait times for `DEPARTMENT` at `NHS TRUST`")
-
-    
 
 if __name__ == "__main__":
     main()
