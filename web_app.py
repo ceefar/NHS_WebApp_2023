@@ -230,6 +230,8 @@ if __name__ == "__main__":
 # - list of other fast trusts countrywide, like top 10 or 20 or sumnt (as could be useful to just see, could then easily tie this to postcode thing too)
 # - rank of urs in country and any other random additional info
 
+# QUICKLY UPDATE THE YML (so we're only at the preset times and not on 6/7 hour CRON)
+
 # CHOOSE DATE THING IN SIDEBAR
 # - with unit tests so do that with this basically
 # UNIT TESTS & BASIC ERROR HANDLING
