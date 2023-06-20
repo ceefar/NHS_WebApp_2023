@@ -73,6 +73,28 @@ def get_min_max_first_apt_wait_for_department_and_region(user_department_entry, 
     min_max_for_dept_and_region = webapi.get_min_max_first_apt_wait_for_department_and_region(user_department_entry, user_region_shortcode)
     return min_max_for_dept_and_region
 
+@st.cache_data
+def get_ranked_hospitals(department, date):
+    hospitals = webapi.rank_hospitals(department, date)
+    return hospitals
+
+@st.cache_data
+def display_hospitals(hospital_name, department, date):
+    """ get the ranked hospitals for a given department and for a given date, in format : `2023-06-20` """
+    hospitals = get_ranked_hospitals(department, date)
+    # Find the selected hospital and the hospitals ranked 1 above and below
+    selected_hospitals = []
+    for i, hospital in enumerate(hospitals):
+        if hospital['hospital_name'].lower() == hospital_name.lower():
+            if i > 0:
+                selected_hospitals.append(hospitals[i - 1])  # hospital ranked 1 above
+            selected_hospitals.append(hospital)  # selected hospital
+            if i < len(hospitals) - 1:
+                selected_hospitals.append(hospitals[i + 1])  # hospital ranked 1 below
+            break
+    # -- 
+    st.write(selected_hospitals)
+
 # -- TO MOVE TO SOME NEW ST MODULE (or just the misc module tbf?) --
 def custom_div(hex_colour=NHSColors.NHS_Dark_Green, thickness=2):
     r_for_a, g_for_a, b_for_a = hex_to_rgb(hex_colour)
@@ -169,7 +191,7 @@ def main():
         min_max_for_dept_x_region = get_min_max_first_apt_wait_for_department_and_region(user_department_entry, user_region_shortcode)
 
         # -- main display for data returned from db which is pulled from nhs mpc api daily via cicd pipeline --
-        tab_1, tab_2, tab_3, tab_4 = st.tabs(["Selected Trust", "Region Min/Max", "Country Min/Max", "Tab 4 : Averages Sumnt"])
+        tab_1, tab_2, tab_3, tab_4, tab_5 = st.tabs(["Your Trust Info", "Region Min/Max", "Country Min/Max", "Regional Averages", "Incoming"])
         with tab_1:
             display_selected_trust_wait_times_overview(trust_first_apt_wait_time_from_db_name, trust_first_apt_wait_time_from_db_wait_time, trust_avg_wait_time_from_db_wait_time)
         with tab_2:
@@ -177,20 +199,31 @@ def main():
         with tab_3:
             display_min_max_wait_times_countrywide(user_department_entry, trust_first_apt_wait_time_from_db_wait_time)
 
-
         with tab_4:
-            # -- region avgs, first apt, now date can update, note that this is currently the only thing date will update tho --
-            swest_daily_avg_first_apt_wait = get_swest_daily_avg_first_apt(user_department_entry, user_date_entry)
-            ney_daily_avg_first_apt_wait = get_ney_daily_avg_first_apt(user_department_entry, user_date_entry)
-            london_avg = get_london_daily_avg_first_apt(user_department_entry, user_date_entry)
-            mids_avg = get_mids_daily_avg_first_apt(user_department_entry, user_date_entry)
-            # -- yes obvs need to do the proper ui here with columns, and with this whole thing abstracted into its own function too, if refactoring make this stuff class based 100% --
-            st.metric(label="ALL LONDON Avg Wait", value=f"{float(london_avg):.1f}")
-            st.metric(label="ALL MIDLANDS Avg Wait", value=f"{float(mids_avg):.1f}")
-            st.metric(label="ALL SWEST Avg Wait", value=f"{float(swest_daily_avg_first_apt_wait):.1f}")
-            st.metric(label="ALL NEY Avg Wait", value=f"{float(ney_daily_avg_first_apt_wait):.1f}")
-            st.divider()
-
+            def display_regional_averages(user_department_entry, user_date_entry):
+                st.write("###")
+                region_avg_col_1, region_avg_col_2, region_avg_col_3, region_avg_col_4, region_avg_col_5, region_avg_col_6 = st.columns(spec=6, gap="medium")
+                # -- region avgs, first apt, now date can update, note that this is currently the only thing date will update tho --
+                swest_daily_avg_first_apt_wait = get_swest_daily_avg_first_apt(user_department_entry, user_date_entry)
+                ney_daily_avg_first_apt_wait = get_ney_daily_avg_first_apt(user_department_entry, user_date_entry)
+                london_avg = get_london_daily_avg_first_apt(user_department_entry, user_date_entry)
+                mids_avg = get_mids_daily_avg_first_apt(user_department_entry, user_date_entry)
+                # -- yes obvs need to do the proper ui here with columns -- 
+                # -- and with this whole thing abstracted into its own function too, if refactoring make this stuff class based 100% --
+                with region_avg_col_1:
+                    st.metric(label="ALL LONDON Avg Wait", value=f"{float(london_avg):.1f}")
+                with region_avg_col_2:
+                    st.metric(label="ALL MIDLANDS Avg Wait", value=f"{float(mids_avg):.1f}")
+                with region_avg_col_3:
+                    st.metric(label="ALL SWEST Avg Wait", value=f"{float(swest_daily_avg_first_apt_wait):.1f}")
+                with region_avg_col_4:
+                    st.metric(label="ALL NEY Avg Wait", value=f"{float(ney_daily_avg_first_apt_wait):.1f}")
+                st.divider()
+            display_regional_averages(user_department_entry, user_date_entry)
+        
+        with tab_5:
+            # N0TE : USING DATE HERE BUT REMEMBER THATS NOT FULLY IMPLEMENTED YET, THO LEAVING AS ITS WORTH DOING THE ERROR HANDLING AS IT ARISES!
+            display_hospitals(user_trust_entry, user_department_entry, user_date_entry) 
 
         
     # -- app mode : chatbot --
@@ -208,11 +241,13 @@ if __name__ == "__main__":
 # [ FINAL TOD0! ]
 # -------------
 # LAST REMAINING TABS TO ADD
+# - update this display tab to do view this shit properly
 # - add the rest of the averages for regions 
 #   - its tab 4, do the cols too btw, and check it in mobile view also primarily 
 # - add in the date thing just for this avg regions thing, AND MAKE SURE THAT IS SUPER CLEAR
 #   - e.g. if selected date not currentdate then display a tooltip where valid bosh
 #   - do some basic error handling also
+#       - i.e. change the date to too early so there is no data
 #       - i.e. dont let the date go past the current date and also find the first valid date of data 
 #       - could also start unit testing here too tbf if u want
 # - add in some super basic info to selected trust tab for like how fast slow it is in comparison, use text not delta (tho ig delta too if you want)

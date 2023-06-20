@@ -124,4 +124,34 @@ class Database:
         # --
         except mysql.connector.errors.InternalError:
             return False
+        
+    # -- new test, multi cursor + dict return --
+    def rank_hospitals(self, department, date:str):
+        """ requires date as string in fortmat : `2023-06-20` """
+        # -- use dict return -- 
+        cursor = conn.cursor(dictionary=True)
+
+        # -- set the @dept and @date variables --
+        cursor.execute(f"SET @dept = '{department}';")
+        cursor.execute(f"SET @date = '{date}';")
+        # -- execute the main query --
+        cursor.execute(f"""
+            SELECT 
+                hospital_name,
+                `{department}` as wait_time,
+                @rank := @rank + 1 as ranking
+            FROM 
+                first_apt, (SELECT @rank := 0) r
+            WHERE 
+                `{department}` IS NOT NULL
+                AND DATE(created_on) = @date
+            ORDER BY 
+                wait_time ASC;
+        """)
+        # -- fetch result --
+        result = cursor.fetchall()
+
+        # -- return -- 
+        return result
+
        
