@@ -8,19 +8,20 @@ import streamlit as st
 from streamlit.errors import StreamlitAPIException 
 import os
 import openai
-import folium
 import datetime
-from streamlit_folium import folium_static
 from dotenv import load_dotenv
 # -- internal imports --
 import func_web_api as webapi
 from func_misc import Misc, NHSColors, get_cleaned_dept, hex_to_rgb, st_page_load
+# -- currently unused imports --
+# import folium
+# from streamlit_folium import folium_static
 
 # -- frontend/backend setup : st, env, openai api --
 try:
     st_page_load() # just ensures this is run incase for some reason it hasnt been which tbh happens mostly just during debugging / dev hence why am still leaving it for now
 except StreamlitAPIException as stErr:
-    print(f"{stErr = }")
+    print(f"\n- - - - - - - - - -\n[ Warning : Forcing Page Load ]\n- - - - - - - - - -\n")
 load_dotenv()
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 openai.api_key = OPENAI_API_KEY
@@ -85,7 +86,7 @@ def get_ranked_hospitals(department, date):
     return hospitals
 
 @st.cache_data
-def display_hospitals(hospital_name, department, date):
+def get_ranked_hospitals_snapshot_data(hospital_name, department, date):
     """ get the ranked hospitals for a given department and for a given date, in format : `2023-06-20` """
     hospitals = get_ranked_hospitals(department, date)
     # Find the selected hospital and the hospitals ranked 1 above and below
@@ -98,8 +99,8 @@ def display_hospitals(hospital_name, department, date):
             if i < len(hospitals) - 1:
                 selected_hospitals.append(hospitals[i + 1])  # hospital ranked 1 below
             break
-    # -- 
-    st.write(selected_hospitals)
+    # -- return -- 
+    return selected_hospitals
 
 # -- TO MOVE TO SOME NEW ST MODULE (or just the misc module tbf?) --
 def custom_div(hex_colour=NHSColors.NHS_Dark_Green, thickness=2):
@@ -226,10 +227,42 @@ def main():
             display_min_max_wait_times_countrywide(user_department_entry, trust_first_apt_wait_time_from_db_wait_time)
         with tab_4:
             display_regional_averages(user_department_entry, user_date_entry)
-        
+
+
+        def display_hospital_data(hospital_name, wait_time, ranking):
+            st.markdown(
+                f"""
+                <div style="display: flex; align-items: center; margin-bottom: 10px; background-color: #f2f2f2; border: 1px solid #ddd; border-radius: 5px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);">
+                    <h2 style="flex: 0 0 60px; margin-right: 10px; background-color: #6c757d; color: #fff; text-align: center; padding: 5px; border-top-left-radius: 5px; border-bottom-left-radius: 5px;">#{int(ranking)}</h2>
+                    <div style="flex-grow: 1; padding: 10px;">
+                        <h4 style="font-weight: bold; margin-bottom: -15px;">{hospital_name}</h4>
+                        <p style="color: #666;">Wait Time: {wait_time}</p>
+                    </div>
+                    <h3 style="flex: 0 0 60px; text-align: right; background-color: #6c757d; color: #fff; padding: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px;">{wait_time} weeks</h3>
+                </div>
+                """, unsafe_allow_html=True)
+
+        # def display_hospital_data(hospital_name, wait_time, ranking):
+        #     st.markdown(
+        #         f"""
+        #         <div style="display: flex; align-items: center; margin-bottom: 10px;">
+        #             <h2 style="flex: 0 0 60px; margin-right: 10px;">#{int(ranking)}</h2>
+        #             <div style="flex-grow: 1;">
+        #                 <h4 style="font-weight: bold; margin-bottom: -15px;">{hospital_name}</h4>
+        #                 <p style="color: #666;">Wait Time: {wait_time}</p>
+        #             </div>
+        #             <h3 style="flex: 0 0 60px; text-align: right;">{wait_time} weeks</div>
+        #         </div>
+        #         """, unsafe_allow_html=True)
+
         with tab_5:
             # N0TE : USING DATE HERE BUT REMEMBER THATS NOT FULLY IMPLEMENTED YET, THO LEAVING AS ITS WORTH DOING THE ERROR HANDLING AS IT ARISES!
-            display_hospitals(user_trust_entry, user_department_entry, user_date_entry) 
+            ranked_hospitals_data_snapshot = get_ranked_hospitals_snapshot_data(user_trust_entry, user_department_entry, user_date_entry) 
+            for a_trust_tuple in ranked_hospitals_data_snapshot:
+                trust_name = a_trust_tuple["hospital_name"]
+                wait_time = a_trust_tuple["wait_time"]
+                ranking = a_trust_tuple["ranking"]
+                display_hospital_data(trust_name, wait_time, ranking)
 
 
             # CONTINUE FROM HERE - GET THE RETURN AND DO DISPLAY SEPERATELY, THEN ABSTRACT IT OUT PROPERLY AGAIN AND MOVE THE ABOVE N0TE ABOUT DATE INTO THERE TOO
