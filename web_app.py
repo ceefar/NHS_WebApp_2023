@@ -180,6 +180,37 @@ def display_regional_averages(user_department_entry, user_date_entry):
         st.metric(label="ALL NEY Avg Wait", value=f"{float(ney_daily_avg_first_apt_wait):.1f}")
     st.divider()
 
+def display_hospital_data(hospital_name, wait_time, ranking):
+    st.markdown(
+        f"""
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        .hospital-card {{
+            font-family: 'Roboto', sans-serif;
+        }}
+        </style>
+        <div class="hospital-card" style="display: flex; align-items: stretch; margin-bottom: 20px; background-color: #f2f2f2; border: 1px solid #ddd; border-radius: 5px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);">
+            <div style="display: flex; align-items: center; justify-content: center; flex: 0 0 20px; margin-right: 10px; background-color: {NHSColors.NHS_Light_Green}; color: #fff; text-align: center; padding: 5px; border-top-left-radius: 5px; border-bottom-left-radius: 5px; height: 100%; box-sizing: border-box;">
+                <h2 style="margin: 0 -20px; padding-bottom: 15px; color:#f2f2f2;">#{int(ranking)}</h2>
+            </div>
+            <div style="flex-grow: 1; padding: 0px;">
+                <h4 style="font-weight: bold; margin-bottom: -15px; font-size:0.9rem">{hospital_name}</h4>                        
+            </div>
+            <div style="display: flex; align-items: center; justify-content: center; flex: 0 0 60px; text-align: center; background-color: #19647e; color: #fff; padding: 10px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; height: 100%; box-sizing: border-box;">
+                <h3 style="margin: 0 -20px; padding-bottom: 15px; color:#f2f2f2; font-size:0.9rem;">{wait_time} w</h3>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+def display_ranked_snapshot(user_trust_entry, user_department_entry, user_date_entry):
+    # N0TE : USING DATE HERE BUT REMEMBER THATS NOT FULLY IMPLEMENTED YET, THO LEAVING AS ITS WORTH DOING THE ERROR HANDLING AS IT ARISES!
+    ranked_hospitals_data_snapshot = get_ranked_hospitals_snapshot_data(user_trust_entry, user_department_entry, user_date_entry) 
+    for a_trust_tuple in ranked_hospitals_data_snapshot:
+        trust_name = a_trust_tuple["hospital_name"]
+        wait_time = a_trust_tuple["wait_time"]
+        ranking = a_trust_tuple["ranking"]
+        display_hospital_data(trust_name, wait_time, ranking)
+
 
 # -- main --
 def main():
@@ -191,8 +222,6 @@ def main():
 
     # -- app mode : manual --
     if app_mode == "Manual":
-
-        # -- NOTE : properly abstract all this stuff and bang it in functs/modules when the logic is finalised
 
         # -- top input section --
         st.markdown("##### Search For Wait Time Info")
@@ -227,55 +256,21 @@ def main():
             display_min_max_wait_times_countrywide(user_department_entry, trust_first_apt_wait_time_from_db_wait_time)
         with tab_4:
             display_regional_averages(user_department_entry, user_date_entry)
-
-        def display_hospital_data(hospital_name, wait_time, ranking):
-            st.markdown(
-                f"""
-                <style>
-                @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-                .hospital-card {{
-                    font-family: 'Roboto', sans-serif;
-                }}
-                </style>
-                <div class="hospital-card" style="display: flex; align-items: stretch; margin-bottom: 20px; background-color: #f2f2f2; border: 1px solid #ddd; border-radius: 5px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);">
-                    <div style="display: flex; align-items: center; justify-content: center; flex: 0 0 20px; margin-right: 10px; background-color: {NHSColors.NHS_Light_Green}; color: #fff; text-align: center; padding: 5px; border-top-left-radius: 5px; border-bottom-left-radius: 5px; height: 100%; box-sizing: border-box;">
-                        <h2 style="margin: 0 -20px; padding-bottom: 15px; color:#f2f2f2;">#{int(ranking)}</h2>
-                    </div>
-                    <div style="flex-grow: 1; padding: 0px;">
-                        <h4 style="font-weight: bold; margin-bottom: -15px; font-size:0.9rem">{hospital_name}</h4>                        
-                    </div>
-                    <div style="display: flex; align-items: center; justify-content: center; flex: 0 0 60px; text-align: center; background-color: #19647e; color: #fff; padding: 10px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; height: 100%; box-sizing: border-box;">
-                        <h3 style="margin: 0 -20px; padding-bottom: 15px; color:#f2f2f2; font-size:0.9rem;">{wait_time} w</h3>
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
-
-
         with tab_5:
-            # N0TE : USING DATE HERE BUT REMEMBER THATS NOT FULLY IMPLEMENTED YET, THO LEAVING AS ITS WORTH DOING THE ERROR HANDLING AS IT ARISES!
-            ranked_hospitals_data_snapshot = get_ranked_hospitals_snapshot_data(user_trust_entry, user_department_entry, user_date_entry) 
-            for a_trust_tuple in ranked_hospitals_data_snapshot:
-                trust_name = a_trust_tuple["hospital_name"]
-                wait_time = a_trust_tuple["wait_time"]
-                ranking = a_trust_tuple["ranking"]
-                display_hospital_data(trust_name, wait_time, ranking)
+            display_ranked_snapshot(user_trust_entry, user_department_entry, user_date_entry)
+            
 
-
-            # CONTINUE FROM HERE - GET THE RETURN AND DO DISPLAY SEPERATELY, THEN ABSTRACT IT OUT PROPERLY AGAIN AND MOVE THE ABOVE N0TE ABOUT DATE INTO THERE TOO
-
-            # basically to do from here is...
-            # quickly update the colours for this so that if they're over 50 then theyre red or sumnt like dat (could be over x weeks but meh)
-            # finish this regional averages bit,
-            # then do cloud, date, chatbot, unit tests, and owt else that may be notable / pressing 
-            # then new challenger thing initial project just fuck about as need to get back to grips with ocr and comp vision again huh
+        # basically to do from here is...
+        # quickly update the colours for this so that if they're over 50 then theyre red or sumnt like dat (could be over x weeks but meh)
+        # finish this regional averages bit,
+        # then do cloud, date, chatbot, unit tests, and owt else that may be notable / pressing 
+        # then new challenger thing initial project just fuck about as need to get back to grips with ocr and comp vision again huh
 
 
     # -- app mode : chatbot --
     elif app_mode == "NHS GPT":
         st.markdown("##### NHS GPT")
         user_chat_entry = st.text_input(label="What wait time information would you like to know?", value="What are the wait times for Neurology at Barts NHS Trust?", help="E.g. What are the wait times for `DEPARTMENT` at `NHS TRUST`")
-
-    
 
 if __name__ == "__main__":
     main()
