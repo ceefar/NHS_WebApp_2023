@@ -231,45 +231,25 @@ def main():
         def display_hospital_data(hospital_name, wait_time, ranking):
             st.markdown(
                 f"""
-                <div style="display: flex; align-items: stretch; margin-bottom: 10px; background-color: #f2f2f2; border: 1px solid #ddd; border-radius: 5px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);">
-                    <div style="display: flex; align-items: center; justify-content: center; flex: 0 0 60px; margin-right: 10px; background-color: #6c757d; color: #fff; text-align: center; padding: 5px; border-top-left-radius: 5px; border-bottom-left-radius: 5px; height: 100%;">
-                        <h2 style="margin: 0;">#{int(ranking)}</h2>
+                <style>
+                @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+                .hospital-card {{
+                    font-family: 'Roboto', sans-serif;
+                }}
+                </style>
+                <div class="hospital-card" style="display: flex; align-items: stretch; margin-bottom: 20px; background-color: #f2f2f2; border: 1px solid #ddd; border-radius: 5px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);">
+                    <div style="display: flex; align-items: center; justify-content: center; flex: 0 0 20px; margin-right: 10px; background-color: {NHSColors.NHS_Light_Green}; color: #fff; text-align: center; padding: 5px; border-top-left-radius: 5px; border-bottom-left-radius: 5px; height: 100%; box-sizing: border-box;">
+                        <h2 style="margin: 0 -20px; padding-bottom: 15px; color:#f2f2f2;">#{int(ranking)}</h2>
                     </div>
-                    <div style="flex-grow: 1; padding: 10px;">
-                        <h4 style="font-weight: bold; margin-bottom: -15px;">{hospital_name}</h4>
-                        <p style="color: #666;">Wait Time: {wait_time}</p>
+                    <div style="flex-grow: 1; padding: 0px;">
+                        <h4 style="font-weight: bold; margin-bottom: -15px; font-size:0.9rem">{hospital_name}</h4>                        
                     </div>
-                    <div style="display: flex; align-items: center; justify-content: center; flex: 0 0 60px; text-align: right; background-color: #6c757d; color: #fff; padding: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; height: 100%;">
-                        <h3 style="margin: 0;">{wait_time} weeks</h3>
+                    <div style="display: flex; align-items: center; justify-content: center; flex: 0 0 60px; text-align: center; background-color: #19647e; color: #fff; padding: 10px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; height: 100%; box-sizing: border-box;">
+                        <h3 style="margin: 0 -20px; padding-bottom: 15px; color:#f2f2f2; font-size:0.9rem;">{wait_time} w</h3>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
 
-        # def display_hospital_data(hospital_name, wait_time, ranking):
-        #     st.markdown(
-        #         f"""
-        #         <div style="display: flex; align-items: center; margin-bottom: 10px; background-color: #f2f2f2; border: 1px solid #ddd; border-radius: 5px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);">
-        #             <h2 style="flex: 0 0 60px; margin-right: 10px; background-color: #6c757d; color: #fff; text-align: center; padding: 5px; border-top-left-radius: 5px; border-bottom-left-radius: 5px;">#{int(ranking)}</h2>
-        #             <div style="flex-grow: 1; padding: 10px;">
-        #                 <h4 style="font-weight: bold; margin-bottom: -15px;">{hospital_name}</h4>
-        #                 <p style="color: #666;">Wait Time: {wait_time}</p>
-        #             </div>
-        #             <h3 style="flex: 0 0 60px; text-align: right; background-color: #6c757d; color: #fff; padding: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px;">{wait_time} weeks</h3>
-        #         </div>
-        #         """, unsafe_allow_html=True)
-
-        # def display_hospital_data(hospital_name, wait_time, ranking):
-        #     st.markdown(
-        #         f"""
-        #         <div style="display: flex; align-items: center; margin-bottom: 10px;">
-        #             <h2 style="flex: 0 0 60px; margin-right: 10px;">#{int(ranking)}</h2>
-        #             <div style="flex-grow: 1;">
-        #                 <h4 style="font-weight: bold; margin-bottom: -15px;">{hospital_name}</h4>
-        #                 <p style="color: #666;">Wait Time: {wait_time}</p>
-        #             </div>
-        #             <h3 style="flex: 0 0 60px; text-align: right;">{wait_time} weeks</div>
-        #         </div>
-        #         """, unsafe_allow_html=True)
 
         with tab_5:
             # N0TE : USING DATE HERE BUT REMEMBER THATS NOT FULLY IMPLEMENTED YET, THO LEAVING AS ITS WORTH DOING THE ERROR HANDLING AS IT ARISES!
@@ -284,6 +264,7 @@ def main():
             # CONTINUE FROM HERE - GET THE RETURN AND DO DISPLAY SEPERATELY, THEN ABSTRACT IT OUT PROPERLY AGAIN AND MOVE THE ABOVE N0TE ABOUT DATE INTO THERE TOO
 
             # basically to do from here is...
+            # quickly update the colours for this so that if they're over 50 then theyre red or sumnt like dat (could be over x weeks but meh)
             # finish this regional averages bit,
             # then do cloud, date, chatbot, unit tests, and owt else that may be notable / pressing 
             # then new challenger thing initial project just fuck about as need to get back to grips with ocr and comp vision again huh
