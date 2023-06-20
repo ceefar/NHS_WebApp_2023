@@ -5,6 +5,7 @@
 
 # -- imports --
 import streamlit as st
+from streamlit.errors import StreamlitAPIException 
 import os
 import openai
 import folium
@@ -13,9 +14,13 @@ from streamlit_folium import folium_static
 from dotenv import load_dotenv
 # -- internal imports --
 import func_web_api as webapi
-from func_misc import Misc, NHSColors, get_cleaned_dept, hex_to_rgb
+from func_misc import Misc, NHSColors, get_cleaned_dept, hex_to_rgb, st_page_load
 
 # -- frontend/backend setup : st, env, openai api --
+try:
+    st_page_load() # just ensures this is run incase for some reason it hasnt been which tbh happens mostly just during debugging / dev hence why am still leaving it for now
+except StreamlitAPIException as stErr:
+    print(f"{stErr = }")
 load_dotenv()
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 openai.api_key = OPENAI_API_KEY
