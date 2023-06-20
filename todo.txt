@@ -1,6 +1,4 @@
-[ day 3 - 19/06 ]
-
-[ done ]
+[ done : 19/06 ]
 - added seast, nwest, & east to api pipeline
 - added seast, nwest, & east stored procedures
 - added seast, nwest, & east table creation func to async_api script
@@ -11,8 +9,12 @@
 - fixed backend bugs with cicd and stored procedures
 - colours class
 - new tabs ui 
+- min max for country
+
+[ done : 20/06 ]
+- abstracted out more web_api calls to cached functions as guna implement some unit tests shortly
+- exapnding averages, adding in cached calls, updating backend functionality to including using date to change averages info (only avgs for now)
 
 [ todo ]
 - see web_app.py but basically nearly done just last few remaining things will need a day or 2
-    - with that in mind starting other side project now for a bit of a break
-    - then once this is done will be returning to wito project full time and the other game side project as my new side project
+    - then once this is done will start returning to wito project full time, tho maybe just part time to start 
