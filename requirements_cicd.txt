@@ -3,4 +3,5 @@ mysql-connector-python==8.0.29
 python-dotenv==1.0.0
 requests==2.28.1
 
-# streamlit==1.21.0
+# can remove this if we remove streamlit from the func_misc as its page_load is there, is fine for now as is just cicd nonetheless, i.e. this runs at 2am for like 50 sec ffs it doesnt matter 
+streamlit==1.21.0 
