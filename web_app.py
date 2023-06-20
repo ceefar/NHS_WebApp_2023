@@ -194,7 +194,7 @@ def display_hospital_data(hospital_name, wait_time, ranking):
                 <h2 style="margin: 0 -20px; padding-bottom: 15px; color:#f2f2f2;">#{int(ranking)}</h2>
             </div>
             <div style="flex-grow: 1; padding: 0px;">
-                <h4 style="font-weight: bold; margin-bottom: -15px; font-size:0.9rem">{hospital_name}</h4>                        
+                <h4 style="font-weight: bold; margin-bottom: -15px; font-size:0.9rem; color:#333;">{hospital_name}</h4>                        
             </div>
             <div style="display: flex; align-items: center; justify-content: center; flex: 0 0 60px; text-align: center; background-color: #19647e; color: #fff; padding: 10px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; height: 100%; box-sizing: border-box;">
                 <h3 style="margin: 0 -20px; padding-bottom: 15px; color:#f2f2f2; font-size:0.9rem;">{wait_time} w</h3>
