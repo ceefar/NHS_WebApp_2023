@@ -26,7 +26,7 @@ def get_db_connection():
     return connection
 
 # -- create a route /api/data that fetches all rows from the first_apt table in the db and returns them as a JSON response --
-@app.route('/api/data', methods=['GET'])
+@app.route('/api/all_data', methods=['GET'])
 def get_data():
     connection = get_db_connection()
     cursor = connection.cursor()
@@ -39,5 +39,19 @@ def get_data():
     connection.close()
     return jsonify(rows)
 
+@app.route('/api/trust_data', methods=['GET'])
+def get_hospital_name_data():
+    param = request.args.get('param')
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM first_apt WHERE hospital_name = %s;', (param,))
+    print(f"PARAM = {param}")
+    rows = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return jsonify(rows)
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
+
+
