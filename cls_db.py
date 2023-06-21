@@ -4,13 +4,12 @@
 
 # -- imports --
 import os
-from dotenv import load_dotenv
 import mysql.connector
 from mysql.connector import Error
 import streamlit as st
+from dotenv import load_dotenv
 
 # -- initial db cnx setup - load db vars from .env -- 
-# bruh wtf
 # load_dotenv()
 host = os.environ.get("mysql_host")
 user = os.environ.get("mysql_user")
@@ -18,7 +17,6 @@ password = os.environ.get("mysql_password")
 database = os.environ.get("mysql_db")
 port = 3306
 
-print(f"DEBUG AF : {host = }")
 if not host:
     host = st.secrets["MYSQL_HOST"]
     user = st.secrets["MYSQL_USER"]
