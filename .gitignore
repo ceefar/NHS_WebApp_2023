@@ -2,3 +2,4 @@ secrets.txt
 .env
 gpt_tests
 secrets.toml
+temp_todo.txt
