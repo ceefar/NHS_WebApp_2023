@@ -12,7 +12,7 @@ from func_misc import st_page_load
 # -- global db conn --
 try:
     db = Database()
-    st_page_load() # -- set to wide here if we don't hit an error connecting to the db --
+    # st_page_load() # -- set to wide here if we don't hit an error connecting to the db --
 except DatabaseError as dbErr:
     # -- run the st page load here for the first time as it needs to be the first st function run, and we then display a warning st callout if we error so this needs to run first here which is absolutely fine as its the web app api stuff anyways --
     st_page_load()   
