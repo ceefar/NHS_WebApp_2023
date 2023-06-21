@@ -16,10 +16,10 @@ from func_misc import Misc, NHSColors, get_cleaned_dept, hex_to_rgb, st_page_loa
 # -- currently unused imports : import folium, from streamlit_folium import folium_static --
 
 # -- frontend/backend setup : st, env, openai api --
-try:
-    st_page_load() # just ensures this is run incase for some reason it hasnt been which tbh happens mostly just during debugging / dev hence why am still leaving it for now
-except StreamlitAPIException as stErr:
-    print(f"- - - - - - - - - -\n[ Warning : Forcing Page Load ]\n- - - - - - - - - -")
+# try:
+st_page_load() # just ensures this is run incase for some reason it hasnt been which tbh happens mostly just during debugging / dev hence why am still leaving it for now
+# except StreamlitAPIException as stErr:
+#     print(f"- - - - - - - - - -\n[ Warning : Forcing Page Load ]\n- - - - - - - - - -")
 load_dotenv()
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 openai.api_key = OPENAI_API_KEY
