@@ -51,19 +51,26 @@ def get_first_apt_wait_times():
 
 @app.route('/api/all_trusts', methods=['GET'])
 def get_all_trust_names_data():
-    """ create a route /api/all_trusts that fetches all unique trust names from the first_apt table in the db and returns them as a JSON response """
+    """ create a route /api/all_trusts that fetches all unique trust names from the first_apt table in the db and returns them as a JSON response, with optional region arg """
+    region = request.args.get('region')
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute('SELECT DISTINCT(hospital_name) FROM first_apt;')
+    # -- switch to get only hospitals for a given region if region is given --
+    if region:
+        cursor.execute('SELECT DISTINCT(hospital_name) FROM first_apt WHERE hospital_region = %s;', (region,))
+    else:
+        cursor.execute('SELECT DISTINCT(hospital_name) FROM first_apt;')
+    # -- clean response --
     rows = cursor.fetchall()
     data = []
     for row in rows:
         data.append({'hospital_name': row[0]}) 
+    # -- close and return --
     cursor.close()
     connection.close()
     return jsonify(data)
 
-@app.route('/api/all_data', methods=['GET'])
+@app.route('/api/data', methods=['GET'])
 def get_data():
     """ create a default test route /api/all_data that fetches all rows from the first_apt table in the db and returns them raw """
     connection = get_db_connection()
@@ -83,8 +90,10 @@ if __name__ == '__main__':
 
 # QUICKLY DO
 # - API CALL TO GET THE HOSPITAL LISTS THING AND USE THIS TO POPULATE THE HOSPITAL TRUST NAMES, OBVS THEN CACHE IT THO
+#   - duhhhhhh no, what you actually do is get all the hospital names in a list at the start in a dict and cache that!
 # - THEN LEGIT MAKE THE API LIVE TO TEST
 #   - REMEMBER WE ARE USING CONDA THO!
+# - DO PROPER ERROR HANDLING AND UNIT TESTING FROM THE START
 
 # ASK GPT
 # - how to handle errors!

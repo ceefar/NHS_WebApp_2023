@@ -19,6 +19,7 @@
 [ done : 21/06]
 - tbf not been keeping this up properly but...
 - added refresh cnx and dropped cnx err handling
+- api stuff, tbf haven't been updating this properly since 19/06 so will just remove in next branch, maybe keep just a running todo instead of changelog as tho its a nice to have its unnecessary
 
 
 [ todo ]
