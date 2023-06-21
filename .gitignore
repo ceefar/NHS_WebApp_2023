@@ -4,4 +4,3 @@ gpt_tests
 secrets.toml
 temp_todo.txt
 backups
-web_app_test.py
