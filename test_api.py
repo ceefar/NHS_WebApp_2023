@@ -13,7 +13,7 @@ host = os.environ.get("mysql_host")
 user = os.environ.get("mysql_user")
 password = os.environ.get("mysql_password")
 database = os.environ.get("mysql_db")
-port = 3306
+port = int(os.environ.get("PORT", 5000)) # 3306
 
 # -- create an instance of the Flask class --
 app = Flask(__name__)
@@ -84,7 +84,7 @@ def get_data():
 
 # -- driver --
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(host='0.0.0.0', port=port)
 
 
 
