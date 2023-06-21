@@ -16,6 +16,11 @@
 - exapnding averages, adding in cached calls, updating backend functionality to including using date to change averages info (only avgs for now)
 - added sick af cached ranking calls to api via mysql
 
+[ done : 21/06]
+- tbf not been keeping this up properly but...
+- added refresh cnx and dropped cnx err handling
+
+
 [ todo ]
 - see web_app.py but basically nearly done just last few remaining things will need a day or 2
     - then once this is done will start returning to wito project full time, tho maybe just part time to start 

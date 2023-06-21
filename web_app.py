@@ -13,15 +13,13 @@ from dotenv import load_dotenv
 # -- internal imports --
 import func_web_api as webapi
 from func_misc import Misc, NHSColors, get_cleaned_dept, hex_to_rgb, st_page_load
-# -- currently unused imports --
-# import folium
-# from streamlit_folium import folium_static
+# -- currently unused imports : import folium, from streamlit_folium import folium_static --
 
 # -- frontend/backend setup : st, env, openai api --
 try:
     st_page_load() # just ensures this is run incase for some reason it hasnt been which tbh happens mostly just during debugging / dev hence why am still leaving it for now
 except StreamlitAPIException as stErr:
-    print(f"\n- - - - - - - - - -\n[ Warning : Forcing Page Load ]\n- - - - - - - - - -\n")
+    print(f"- - - - - - - - - -\n[ Warning : Forcing Page Load ]\n- - - - - - - - - -")
 load_dotenv()
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 openai.api_key = OPENAI_API_KEY
@@ -100,7 +98,7 @@ def get_ranked_hospitals_snapshot_data(hospital_name, department, date):
                 selected_hospitals.append(hospitals[i + 1])  # hospital ranked 1 below
             break
     # -- return -- 
-    return selected_hospitals
+    return selected_hospitals, len(hospitals)
 
 # -- TO MOVE TO SOME NEW ST MODULE (or just the misc module tbf?) --
 def custom_div(hex_colour=NHSColors.NHS_Dark_Green, thickness=2):
@@ -150,7 +148,7 @@ def display_min_max_wait_times_for_region(user_region_entry, min_max_for_dept_x_
     st.divider()
 
 def display_min_max_wait_times_countrywide(user_department_entry, trust_first_apt_wait_time_from_db_wait_time):
-    custom_title("Min Max Wait Times", f"Countrywide")
+    custom_title("Min Max Wait Times", f"See The Countrywide Best & Worst Performing Trust For Your Given Department")
     list_of_tuples_of_countrywide_waits = get_min_max_first_apt_wait_for_dept_countrywide(user_department_entry)
     sorted_countrywide_waits = sorted(list_of_tuples_of_countrywide_waits, key=lambda x: x[-1])
     for trust_waits_info_tuple in sorted_countrywide_waits:
@@ -161,7 +159,7 @@ def display_min_max_wait_times_countrywide(user_department_entry, trust_first_ap
         st.write("###")
 
 def display_regional_averages(user_department_entry, user_date_entry):
-    st.write("###")
+    custom_title("Regional Averages", f"See How The Regions Stack Up For Your Given Department")
     region_avg_col_1, region_avg_col_2, region_avg_col_3, region_avg_col_4, region_avg_col_5, region_avg_col_6 = st.columns(spec=6, gap="medium")
     # -- region avgs, first apt, now date can update, note that this is currently the only thing date will update tho --
     swest_daily_avg_first_apt_wait = get_swest_daily_avg_first_apt(user_department_entry, user_date_entry)
@@ -171,13 +169,13 @@ def display_regional_averages(user_department_entry, user_date_entry):
     # -- yes obvs need to do the proper ui here with columns -- 
     # -- and with this whole thing abstracted into its own function too, if refactoring make this stuff class based 100% --
     with region_avg_col_1:
-        st.metric(label="ALL LONDON Avg Wait", value=f"{float(london_avg):.1f}")
+        st.metric(label="LONDON TRUSTS Avg Wait", value=f"{float(london_avg):.1f} weeks")
     with region_avg_col_2:
-        st.metric(label="ALL MIDLANDS Avg Wait", value=f"{float(mids_avg):.1f}")
+        st.metric(label="MIDLANDS TRUSTS Avg Wait", value=f"{float(mids_avg):.1f} weeks")
     with region_avg_col_3:
-        st.metric(label="ALL SWEST Avg Wait", value=f"{float(swest_daily_avg_first_apt_wait):.1f}")
+        st.metric(label="SWEST TRUSTS Avg Wait", value=f"{float(swest_daily_avg_first_apt_wait):.1f} weeks")
     with region_avg_col_4:
-        st.metric(label="ALL NEY Avg Wait", value=f"{float(ney_daily_avg_first_apt_wait):.1f}")
+        st.metric(label="NEY TRUSTS Avg Wait", value=f"{float(ney_daily_avg_first_apt_wait):.1f} weeks")
     st.divider()
 
 def display_hospital_data(hospital_name, wait_time, ranking):
@@ -203,19 +201,22 @@ def display_hospital_data(hospital_name, wait_time, ranking):
         """, unsafe_allow_html=True)
     
 def display_ranked_snapshot(user_trust_entry, user_department_entry, user_date_entry):
-    # N0TE : USING DATE HERE BUT REMEMBER THATS NOT FULLY IMPLEMENTED YET, THO LEAVING AS ITS WORTH DOING THE ERROR HANDLING AS IT ARISES!
-    ranked_hospitals_data_snapshot = get_ranked_hospitals_snapshot_data(user_trust_entry, user_department_entry, user_date_entry) 
+    # remember need to fully implement date as its just temp test implementation currently
+    custom_title("Rank Snapshot", f"See How Your Trust Ranks For Your Given Department")
+    st.write(f"")
+    ranked_hospitals_data_snapshot, total_trust_count = get_ranked_hospitals_snapshot_data(user_trust_entry, user_department_entry, user_date_entry) 
     for a_trust_tuple in ranked_hospitals_data_snapshot:
         trust_name = a_trust_tuple["hospital_name"]
         wait_time = a_trust_tuple["wait_time"]
         ranking = a_trust_tuple["ranking"]
         display_hospital_data(trust_name, wait_time, ranking)
+    st.markdown(f"*Out of {total_trust_count} NHS Trusts*")
 
 
 # -- main --
 def main():
     # -- title --
-    custom_title(title="NHS Web App", subtitle="Do Stuff!", want_div=True)
+    custom_title(title="NHS Web App", subtitle="Get Live Optimal Wait Times For A Given Department (+ More!)", want_div=True)
     # -- sidebar --
     with st.sidebar:
         app_mode = st.radio(label="Select a Mode", options=["Manual", "NHS GPT"])
@@ -224,7 +225,7 @@ def main():
     if app_mode == "Manual":
 
         # -- top input section --
-        st.markdown("##### Search For Wait Time Info")
+        custom_title("Search For Wait Time Info", f"Choose A Department To Get Started, Region & Trust Are Optional")
         top_col_1, top_col_2, top_col_3 = st.columns([1,1,1], gap="medium")
         with top_col_1:
             user_department_entry = st.selectbox(label="Select a Department", options=Misc.departments_list)
@@ -238,8 +239,9 @@ def main():
         # -- additional test functionality for date in sidebar, is at the bottom due to control flow but can fix this by abstracting everything properly when completed --
         with st.sidebar:
             custom_div(NHSColors.NHS_Dark_Blue)
-            first_valid_date = date = datetime.datetime(2023, 6, 13) # do this with an api call but this will be fine for now
-            user_date_entry = st.date_input(label="Enter Date - NOT IMPLEMENTED PROPERLY YET!")
+            first_valid_date = datetime.datetime(2023, 6, 13) # do this with an api call but this will be fine for now (i say that as we can do it specific to the trust / region then but also is meh i.e. unnecessary af)
+            last_valid_date = datetime.datetime.now().date()
+            user_date_entry = st.date_input(label="Enter Date - NOT IMPLEMENTED PROPERLY YET!", min_value=first_valid_date, max_value=last_valid_date)
 
         # -- make api calls to get selected data --
         trust_first_apt_wait_time_from_db_name, trust_first_apt_wait_time_from_db_wait_time = get_trust_curr_first_apt_for_a_department(user_department_entry, user_trust_entry)
@@ -260,21 +262,26 @@ def main():
             display_ranked_snapshot(user_trust_entry, user_department_entry, user_date_entry)
             
 
-        # basically to do from here is...
-        # quickly update the colours for this so that if they're over 50 then theyre red or sumnt like dat (could be over x weeks but meh)
-        # finish this regional averages bit,
-        # then do cloud, date, chatbot, unit tests, and owt else that may be notable / pressing 
-        # then new challenger thing initial project just fuck about as need to get back to grips with ocr and comp vision again huh
-
-
     # -- app mode : chatbot --
     elif app_mode == "NHS GPT":
         st.markdown("##### NHS GPT")
         user_chat_entry = st.text_input(label="What wait time information would you like to know?", value="What are the wait times for Neurology at Barts NHS Trust?", help="E.g. What are the wait times for `DEPARTMENT` at `NHS TRUST`")
 
+# -- driver --
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except TypeError:
+        st.experimental_rerun()
 
+
+
+
+
+# quickly update the colours in ranked snapshot for this so that if they're over 50 then theyre red or sumnt like dat (could be over x weeks but meh)
+# finish this regional averages bit,
+# then do cloud, date, chatbot, unit tests, and owt else that may be notable / pressing 
+# then new challenger thing initial project just fuck about as need to get back to grips with ocr and comp vision again huh
 
 
 # [ FINAL TOD0! ]
