@@ -7,17 +7,12 @@ import streamlit as st
 from mysql.connector import DatabaseError
 # -- internal imports --
 from cls_db import Database
-from func_misc import st_page_load
 
 # -- global db conn --
 try:
     db = Database()
-    # st_page_load() # -- set to wide here if we don't hit an error connecting to the db --
 except DatabaseError as dbErr:
-    # -- run the st page load here for the first time as it needs to be the first st function run, and we then display a warning st callout if we error so this needs to run first here which is absolutely fine as its the web app api stuff anyways --
-    st_page_load()   
     print(f"DB Error! : {dbErr = }")
-    st.warning(body="DB Connection Error! The Dev's Are On It. Please Try Again Later.")
 
 # -- funcs : api --
 def get_trust_curr_first_apt_for_a_department(user_department, user_trust):

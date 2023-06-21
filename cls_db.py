@@ -50,36 +50,61 @@ class Database:
         global conn
         conn = self.get_database_connection()
         if conn.is_connected():
-            print(f"Yas")
+            print(f"\n- - - - - - - - - -\n[ Successfully Connected To Personal NHS DB ]\n- - - - - - - - - -\n")
         else:
-            print(f"Nay")
+            print(f"\n- - - - - - - - - -\n[ ERROR! Can't Connect To Personal NHS DB ]\n- - - - - - - - - -\n")
 
     @st.cache_resource
     def get_database_connection(_self):
         """ leading underscore is necessary on the self parameter to ensure the connection isn't hashed by the singleton decorator but still cached """
-        cnx = mysql.connector.connect(user=user, password=password, host=host, database=database)
-        print(f"{cnx = }")
+        try:
+            cnx = mysql.connector.connect(user=user, password=password, host=host, database=database)
+        except mysql.connector.Error as e:
+            print(f"Error connecting to MySQL database: {e}")
+            st.error(f"Error connecting to MySQL database: {e}")
         return cnx
 
     def secure_add_to_db(self, query:str, parameters:tuple|None = None) -> int | None:
         """ prepared statements compile before inputs are added so the statement is only valid if the parameterised parts have changed """
-        with conn.cursor() as cur: 
-            cur.execute(query, parameters) # run the query with paramters added after compilation to prevent sql injection 
-            conn.commit() # commit it to the database
-            return cur.lastrowid # return the last row id when adding something to the db
+        try:
+            with conn.cursor() as cur: 
+                cur.execute(query, parameters) # run the query with paramters added after compilation to prevent sql injection 
+                conn.commit() # commit it to the database
+                return cur.lastrowid # return the last row id when adding something to the db
+        # -- handle err if cnx timesout, simply refresh the global cnx to the db --    
+        except mysql.connector.errors.OperationalError as opErr:
+                print(f"- ERROR! Connection Likely Timed Out - {opErr}\n")
+                # -- get a new connection --
+                self.refresh_connection()
 
     def secure_get_from_db(self, query:str, parameters:tuple|None = None, want_dict:bool = False):
-        if want_dict:     
-            with conn.cursor(dictionary=True) as cur: 
-                cur.execute(query, parameters)
-                result = cur.fetchall()
-                return result 
+        # -- try get from db if db cnx working --
+        try:
+            if want_dict:     
+                with conn.cursor(dictionary=True) as cur: 
+                    cur.execute(query, parameters)
+                    result = cur.fetchall()
+                    return result 
+            else:
+                with conn.cursor() as cur: 
+                    cur.execute(query, parameters)
+                    result = cur.fetchall()
+                    return result 
+        # -- handle err if cnx timesout, simply refreshes the global cnx to the db --    
+        except mysql.connector.errors.OperationalError as opErr:
+                print(f"ERROR! Connection Likely Timed Out - {opErr}")
+                # -- get a new connection --
+                self.refresh_connection()
+
+    def refresh_connection(self):
+        """ used if db cnx timesout """
+        global conn
+        conn = mysql.connector.connect(user=user, password=password, host=host, database=database)
+        if conn.is_connected():
+            print(f"\n- - - - - - - - - -\n[ Successfully Re-Connected To Personal NHS DB ]\n- - - - - - - - - -")
         else:
-            with conn.cursor() as cur: 
-                cur.execute(query, parameters)
-                result = cur.fetchall()
-                return result 
-            
+            print(f"\n- - - - - - - - - -\n[ ERROR! Still Can't Connect To Personal NHS DB ]\n- - - - - - - - - -")
+        
 
     # -- new in dev alpha/test stuff --
     def rank_hospitals(self, department, date:str):
@@ -125,19 +150,8 @@ class Database:
         except mysql.connector.errors.InternalError:
             return False
         
+    
 
-    # -- old x unused : will likely bring back refresh cnx at some point tho for err handling --
-    def init_connection(self):
-        """ old now cnx without cached singleton """
-        cnx = mysql.connector.connect(host=host, database=database, user=user, password=password, port=port) # charset='utf8',
-        return cnx
-
-    def refresh_connection(self):
-        """ old now unused reset, likely worth still implementing tbf for error handling """
-        global conn
-        cnx = mysql.connector.connect(host=host, database=database, user=user, password=password, port=port)
-        conn = cnx
-        return cnx
 
 
        

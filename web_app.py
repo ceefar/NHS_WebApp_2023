@@ -21,7 +21,7 @@ from func_misc import Misc, NHSColors, get_cleaned_dept, hex_to_rgb, st_page_loa
 try:
     st_page_load() # just ensures this is run incase for some reason it hasnt been which tbh happens mostly just during debugging / dev hence why am still leaving it for now
 except StreamlitAPIException as stErr:
-    print(f"\n- - - - - - - - - -\n[ Warning : Forcing Page Load ]\n- - - - - - - - - -\n")
+    print(f"- - - - - - - - - -\n[ Warning : Forcing Page Load ]\n- - - - - - - - - -")
 load_dotenv()
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 openai.api_key = OPENAI_API_KEY
@@ -273,8 +273,10 @@ def main():
         user_chat_entry = st.text_input(label="What wait time information would you like to know?", value="What are the wait times for Neurology at Barts NHS Trust?", help="E.g. What are the wait times for `DEPARTMENT` at `NHS TRUST`")
 
 if __name__ == "__main__":
-    main()
-
+    try:
+        main()
+    except TypeError:
+        st.experimental_rerun()
 
 
 # [ FINAL TOD0! ]
