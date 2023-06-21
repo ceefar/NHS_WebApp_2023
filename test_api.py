@@ -16,7 +16,7 @@ database = os.environ.get("mysql_db")
 port = int(os.environ.get("PORT", 5000)) # 3306
 
 # -- create an instance of the Flask class --
-app = Flask(__name__)
+app = Flask(__name__) 
 
 # -- func to establish mysql db cnx --
 def get_db_connection():
