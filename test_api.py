@@ -28,9 +28,17 @@ def get_db_connection():
     return connection
 
 # -- api routes --
+@app.route('/', methods=['GET'])
+def hello():
+    print("Hello, this is a test!")
+    return "Hello, World!"
+
 @app.route('/api/get_first_apt_wait_times', methods=['GET'])
 def get_first_apt_wait_times():
     """ create a route /api/get_first_apt_wait_times that fetches wait times from first_apt table for a given dept and trust and returns the data as a JSON response """
+    # -- quick debug --
+    print("API endpoint: /api/get_first_apt_wait_times")
+    # -- 
     hospital_name = request.args.get('hospital')
     department = request.args.get('department')
     # -- make db cnx --
@@ -83,8 +91,8 @@ def get_data():
 
 
 # -- driver --
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=port)
+# if __name__ == '__main__':
+#     app.run(host='0.0.0.0', port=port)
 
 
 
