@@ -41,7 +41,7 @@ def get_first_apt_wait_times():
     # -- 
     hospital_name = request.args.get('hospital')
     department = request.args.get('department')
-    # -- make db cnx --
+    # -- make db cnx -- 
     connection = get_db_connection()
     cursor = connection.cursor()
     # -- construct the SQL query --
